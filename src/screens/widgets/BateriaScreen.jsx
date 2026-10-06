@@ -8,7 +8,7 @@ import '../screens.css'
 // Bateria (Figma 153:2026): charging at 72%.
 export default function BateriaScreen({ percent = 72, showDots = true }) {
   return (
-    <FullGradient gradient={batteryGradient} duration={18} phase={0.15}>
+    <FullGradient gradient={batteryGradient} duration={21} phase={0.15}>
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
       <div className="stat-group">
         <div className="stat-group__icon">

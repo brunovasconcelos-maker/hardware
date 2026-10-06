@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home.jsx'
-import HomePage from './pages/HomePage.jsx'
+import Stage from './pages/Stage.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
 import WidgetViewer from './components/WidgetViewer.jsx'
 import { WIDGET_VIEWS } from './screens/widgetViews.jsx'
@@ -22,8 +21,9 @@ const PREVIEW_ROUTES = [
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<HomePage />} />
+      <Route path="/" element={<Stage />} />
+      <Route path="/home" element={<Stage />} />
+      <Route path="/menu" element={<Stage />} />
       {PREVIEW_ROUTES.map(([path, view, page]) => (
         <Route
           key={path}
@@ -35,7 +35,7 @@ export default function App() {
           }
         />
       ))}
-      <Route path="*" element={<Home />} />
+      <Route path="*" element={<Stage />} />
     </Routes>
   )
 }

@@ -2,22 +2,11 @@ import { useRef, useState, useEffect } from 'react'
 import { flushSync } from 'react-dom'
 import PageDots from './PageDots.jsx'
 import { run, dur, SNAP_MS } from '../motion.js'
+import { LOCK_PX, CLOSE_DY, FLICK_V, FLICK_MIN, velocity } from '../gestures.js'
 import './WidgetViewer.css'
 
 const W = 650
-const LOCK_PX = 6 // movement needed to lock the drag direction
-const CLOSE_DY = 120 // upward drag distance that closes
 const SWIPE_FRACTION = 0.25 // horizontal drag (share of width) that changes page
-const FLICK_V = 0.5 // px/ms
-const FLICK_MIN = 20 // minimum travel for a flick
-
-// Velocity (px/ms) over the last ~100ms of pointer samples.
-function velocity(samples, axis) {
-  const last = samples[samples.length - 1]
-  const first = samples.find((s) => last.t - s.t <= 100) ?? samples[0]
-  const dt = last.t - first.t
-  return dt > 0 ? (last[axis] - first[axis]) / dt : 0
-}
 
 // Full-screen widget viewer: renders pages in a horizontal track.
 //  - drag horizontally: pages follow the pointer; release changes page (>25% width or fast flick)

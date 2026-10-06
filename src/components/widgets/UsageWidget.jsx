@@ -10,7 +10,7 @@ const layers = [
 
 export default function UsageWidget({ percent = 13, label = 'Semanal' }) {
   return (
-    <GradientOrb size={180} duration={19} phase={0.3} base="#8a6a9a" layers={layers}>
+    <GradientOrb size={180} duration={25} phase={0.3} base="#8a6a9a" layers={layers}>
       <ProgressRing value={percent / 100} />
       <div className="usage-widget__text">
         <p className="usage-widget__value">{percent}%</p>

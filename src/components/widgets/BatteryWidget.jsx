@@ -9,7 +9,7 @@ const layers = [
 
 export default function BatteryWidget() {
   return (
-    <GradientOrb size={180} duration={16} phase={0.7} base="#2a60dc" layers={layers}>
+    <GradientOrb size={180} duration={20} phase={0.7} base="#2a60dc" layers={layers}>
       <BatteryHigh size={56} weight="light" color="#ffffff" style={{ position: 'absolute', left: 62, top: 29 }} />
       <WifiHigh size={56} weight="light" color="#ffffff" style={{ position: 'absolute', left: 62, top: 95 }} />
     </GradientOrb>

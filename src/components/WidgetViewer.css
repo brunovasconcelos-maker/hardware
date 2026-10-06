@@ -20,9 +20,6 @@
   top: 0;
   width: 650px;
   height: 650px;
-}
-
-/* Pages are square inside the track so neighbouring pages meet cleanly; the device display clips them to the circle. */
-.widget-viewer__page .gradient-orb {
-  border-radius: 0;
+  border-radius: 50%;
+  overflow: hidden;
 }

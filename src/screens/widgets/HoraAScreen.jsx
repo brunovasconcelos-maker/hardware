@@ -7,7 +7,7 @@ import '../screens.css'
 // Hora, style A (Figma 107:1427): analog clock.
 export default function HoraAScreen({ showDots = true }) {
   return (
-    <FullGradient gradient={clockGradient} duration={20} phase={0.05}>
+    <FullGradient gradient={clockGradient} duration={22.5} phase={0.05}>
       <ClockFace />
       {showDots && <PageDots active={0} />}
     </FullGradient>

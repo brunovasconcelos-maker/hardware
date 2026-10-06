@@ -39,7 +39,7 @@ export default function ClockWidget({ style = 'a' }) {
   const now = useNow()
   if (style === 'b') {
     return (
-      <GradientOrb size={180} duration={15} phase={0.5} base={digitalClockGradient.base} layers={digitalClockGradient.layers}>
+      <GradientOrb size={180} duration={21.5} phase={0.5} base={digitalClockGradient.base} layers={digitalClockGradient.layers}>
         <div className="clock-widget__digital" style={{ transform: `scale(${DIGITAL_SCALE})` }}>
           <p className="digital-clock">{`${pad2(now.getHours())}:${pad2(now.getMinutes())}`}</p>
         </div>
@@ -50,7 +50,7 @@ export default function ClockWidget({ style = 'a' }) {
   const m = now.getMinutes()
   const sec = now.getSeconds()
   return (
-    <GradientOrb size={180} duration={20} phase={0.4} base="#6f3aa6" layers={layers}>
+    <GradientOrb size={180} duration={24} phase={0.4} base="#6f3aa6" layers={layers}>
       <svg className="clock-widget__face" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
         {DOT_ANGLES.map((a) => {
           const r = (a * Math.PI) / 180

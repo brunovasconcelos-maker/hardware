@@ -7,7 +7,7 @@ import '../screens.css'
 // Wi-fi (Figma 157:2081): connected network. Same gradient as Bateria.
 export default function WifiScreen({ network = 'INNERAI-GUEST', showDots = true }) {
   return (
-    <FullGradient gradient={batteryGradient} duration={18} phase={0.15}>
+    <FullGradient gradient={batteryGradient} duration={21} phase={0.6}>
       <div className="wifi-group">
         <WifiHigh size={120} weight="regular" color="#ffffff" />
         <div className="wifi-group__text">

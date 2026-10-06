@@ -5,10 +5,10 @@ import PageDots from '../../components/PageDots.jsx'
 import { usageDailyGradient } from '../gradients.js'
 import '../screens.css'
 
-// Usage diário (Figma 107:1941): 98% of the daily limit, with warning icon.
-export default function UsageDiarioScreen({ percent = 98, showDots = true }) {
+// Usage diário (Figma 107:1941): 90% of the daily limit, with warning icon.
+export default function UsageDiarioScreen({ percent = 90, showDots = true }) {
   return (
-    <FullGradient gradient={usageDailyGradient} duration={14} phase={0.3}>
+    <FullGradient gradient={usageDailyGradient} duration={19} phase={0.3}>
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
       <div className="stat-group">
         <div className="stat-group__icon">

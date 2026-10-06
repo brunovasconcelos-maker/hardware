@@ -270,3 +270,67 @@
   left: 44.5px;
   top: 44.5px;
 }
+
+/* Menu (Figma 107:1359) */
+.menu-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #141515;
+  overflow: hidden;
+  animation: menu-in 300ms ease-out;
+}
+.menu-screen__sector {
+  position: absolute;
+  inset: 0;
+}
+.menu-screen__center {
+  position: absolute;
+  left: 145px;
+  top: 145px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: #252525;
+}
+.menu-screen__title {
+  position: absolute;
+  margin: 0;
+  left: calc(50% + 0.5px);
+  top: calc(50% - 19px);
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.menu-screen__slot {
+  position: absolute;
+  box-sizing: border-box;
+  width: 145px;
+  height: 145px;
+  padding: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-screen__slot--action {
+  left: auto;
+  right: 0;
+  top: 252px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-screen {
+    animation: none;
+  }
+}
