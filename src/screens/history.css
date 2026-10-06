@@ -1,0 +1,81 @@
+/* Histórico (Figma coordinates on a 650x650 canvas). Colors on the dark display come from --on-display. */
+:root {
+  --on-display: #ffffff;
+}
+
+.history-screen {
+  color: var(--on-display);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* The scroll area spans the whole screen; the list fades out toward the top (221px, as the Figma gradient) with a mask. */
+.history-screen__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: none; /* drag scrolling is handled in JS (useDragScroll) */
+  user-select: none;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 221px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 221px);
+}
+.history-screen__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.history-screen__list {
+  box-sizing: border-box;
+  margin: 0;
+  list-style: none;
+  padding: 144px 0 108px 125px;
+  width: 524px; /* 125px left + 399px list */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.history-screen__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+.history-screen__dot {
+  flex: none;
+}
+.history-screen__label {
+  flex: none;
+  width: 363px;
+  font-size: 28px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-screen__title {
+  position: absolute;
+  margin: 0;
+  left: calc(50% + 0.5px);
+  top: 48px;
+  transform: translateX(-50%);
+  font-size: 28px;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.history-screen__close {
+  position: absolute;
+  right: 0;
+  top: 252px;
+  box-sizing: border-box;
+  width: 145px;
+  height: 145px;
+  padding: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

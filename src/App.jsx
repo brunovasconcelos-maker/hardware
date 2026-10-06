@@ -3,6 +3,8 @@ import Stage from './pages/Stage.jsx'
 import ThemeSelector from './components/ThemeSelector.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
 import { VoiceIdlePreview, VoiceRecordingPreview, VoiceThinkingPreview, VoiceResultPreview } from './pages/VoicePreview.jsx'
+import DeviceDisplay from './components/DeviceDisplay.jsx'
+import HistoryScreen from './screens/HistoryScreen.jsx'
 import WidgetViewer from './components/WidgetViewer.jsx'
 import { WIDGET_VIEWS } from './screens/widgetViews.jsx'
 
@@ -43,6 +45,7 @@ export default function App() {
         <Route path="/voz/gravando" element={<VoiceRecordingPreview />} />
         <Route path="/voz/pensando" element={<VoiceThinkingPreview />} />
         <Route path="/voz/resultado" element={<VoiceResultPreview />} />
+        <Route path="/historico" element={<DeviceDisplay><HistoryScreen /></DeviceDisplay>} />
         <Route path="*" element={<Stage />} />
       </Routes>
     </>

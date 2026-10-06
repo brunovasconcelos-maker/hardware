@@ -1,8 +1,9 @@
 // Mock voice-mode answers (Result screen). Add more entries to show other answers.
-// Each: id, title, date (a short support line — not always a date), subtitle, body.
+// Each: id, historyTitle (short label in the Histórico list), title, date (a short support line — not always a date), subtitle, body.
 export const VOICE_RESULTS = [
   {
     id: 'pedro-alvares-cabral',
+    historyTitle: 'Descobrimento do Brasil',
     title: 'Pedro Alvares Cabral',
     date: '22 de abril de 1500',
     subtitle: 'Chegada oficial portuguesa',
@@ -10,6 +11,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'agenda',
+    historyTitle: 'Agenda de hoje',
     title: 'Sua agenda de hoje',
     date: 'Quarta, 24 de setembro',
     subtitle: '3 compromissos',
@@ -17,6 +19,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'resumo-emails',
+    historyTitle: 'Resumo dos e-mails',
     title: 'Caixa de entrada',
     date: 'Últimas 12 horas',
     subtitle: '4 e-mails importantes',
@@ -24,6 +27,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'resposta-email',
+    historyTitle: 'Resposta para Carla',
     title: 'E-mail enviado',
     date: 'Hoje, 10:42',
     subtitle: 'Para Carla, sobre o orçamento',
@@ -31,6 +35,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'resumo-reuniao',
+    historyTitle: 'Reunião de produto',
     title: 'Resumo da reunião',
     date: 'Produto, 45 minutos',
     subtitle: '3 decisões e 4 próximos passos',
@@ -38,6 +43,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'resumo-pdf',
+    historyTitle: 'Resumo do relatório anual',
     title: 'Resumo do PDF',
     date: 'Relatório anual, 42 páginas',
     subtitle: '3 pontos principais',
@@ -45,6 +51,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'lembrete',
+    historyTitle: 'Lembrete do contador',
     title: 'Lembrete criado',
     date: 'Sexta, 15:00',
     subtitle: 'Ligar para o contador',
@@ -52,6 +59,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'comparacao',
+    historyTitle: 'Comparação de notebooks',
     title: 'Comparação pronta',
     date: '3 notebooks até R$ 6.000',
     subtitle: 'Melhor custo-benefício',
@@ -59,6 +67,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'viagem',
+    historyTitle: 'Roteiro em Lisboa',
     title: 'Roteiro pronto',
     date: 'Lisboa, 4 dias',
     subtitle: 'Outubro, clima ameno',
@@ -66,6 +75,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'traducao',
+    historyTitle: 'Tradução para o fornecedor',
     title: 'Tradução pronta',
     date: 'Português para inglês',
     subtitle: 'Mensagem para o fornecedor',
@@ -73,6 +83,7 @@ export const VOICE_RESULTS = [
   },
   {
     id: 'curiosidade-cafe',
+    historyTitle: 'Origem do café',
     title: 'Café',
     date: 'Etiópia, século IX',
     subtitle: 'Origem da bebida',
