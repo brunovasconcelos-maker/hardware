@@ -95,3 +95,12 @@
   left: -10px;
   top: -10px;
 }
+
+.clock-widget__digital {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 650px;
+  height: 650px;
+  transform-origin: 0 0;
+}

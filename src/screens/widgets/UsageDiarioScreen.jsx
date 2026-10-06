@@ -6,7 +6,7 @@ import { usageDailyGradient } from '../gradients.js'
 import '../screens.css'
 
 // Usage diário (Figma 107:1941): 98% of the daily limit, with warning icon.
-export default function UsageDiarioScreen({ percent = 98 }) {
+export default function UsageDiarioScreen({ percent = 98, showDots = true }) {
   return (
     <FullGradient gradient={usageDailyGradient} duration={14} phase={0.3}>
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
@@ -17,7 +17,7 @@ export default function UsageDiarioScreen({ percent = 98 }) {
         <p className="stat-group__value">{percent}%</p>
         <p className="stat-group__label">Limite diário</p>
       </div>
-      <PageDots active={1} />
+      {showDots && <PageDots active={1} />}
     </FullGradient>
   )
 }

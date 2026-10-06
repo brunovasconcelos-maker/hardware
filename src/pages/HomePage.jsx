@@ -1,15 +1,15 @@
 import DeviceDisplay from '../components/DeviceDisplay.jsx'
 import FadeIn from '../components/FadeIn.jsx'
-import RestScreen from '../screens/RestScreen.jsx'
+import HomeScreen from '../screens/widgets/HomeScreen.jsx'
 import { useFadeNavigate } from '../hooks/useFadeNavigate.js'
 
-// Rest screen route ("/"). The microphone button fades to the Homepage.
-export default function Home() {
+// Homepage route ("/home"). The grid icon fades back to the rest screen.
+export default function HomePage() {
   const [ref, go] = useFadeNavigate()
   return (
     <DeviceDisplay>
       <FadeIn ref={ref}>
-        <RestScreen onMicClick={() => go('/home')} />
+        <HomeScreen onGridClick={() => go('/')} />
       </FadeIn>
     </DeviceDisplay>
   )

@@ -1,4 +1,7 @@
 import GradientOrb from '../GradientOrb.jsx'
+import { digitalClockGradient } from '../../screens/gradients.js'
+import { useNow, pad2 } from '../../hooks/useNow.js'
+import '../../screens/screens.css'
 import './widgets.css'
 
 const layers = [
@@ -9,17 +12,43 @@ const layers = [
   { type: 'linear', angle: '180deg', stops: [['#4a2a8c', '0%'], ['#7a34b0', '48%'], ['#8c5cc4', '75%'], ['#a98fd6', '100%']] },
 ]
 
-// Static time from Figma: hands at ~5:00 (hour), 12 (minute) and a faint second-hand-style line.
 // Geometry is in the Figma 200x200 "Hora" frame, which overflows the 180px circle by 10px per side.
+// Hands show the real time: each is a segment from radius r0 to r1 around the center ring.
 const DOT_ANGLES = [30, 60, 120, 150, 210, 240, 300, 330]
 const CX = 100
 const CY = 100.1
 
-const hand = (x1, y1, x2, y2, opacity = 1) => (
-  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#fff" strokeOpacity={opacity} strokeWidth="1.846" strokeLinecap="round" />
+const hand = (angle, r0, r1, opacity = 1) => (
+  <line
+    x1={CX}
+    y1={CY - r0}
+    x2={CX}
+    y2={CY - r1}
+    stroke="#fff"
+    strokeOpacity={opacity}
+    strokeWidth="1.846"
+    strokeLinecap="round"
+    transform={`rotate(${angle} ${CX} ${CY})`}
+  />
 )
 
-export default function ClockWidget() {
+const DIGITAL_SCALE = 180 / 650
+
+// style 'a': analog clock. style 'b': the digital full-screen design (HoraB) scaled to the widget size.
+export default function ClockWidget({ style = 'a' }) {
+  const now = useNow()
+  if (style === 'b') {
+    return (
+      <GradientOrb size={180} duration={15} phase={0.5} base={digitalClockGradient.base} layers={digitalClockGradient.layers}>
+        <div className="clock-widget__digital" style={{ transform: `scale(${DIGITAL_SCALE})` }}>
+          <p className="digital-clock">{`${pad2(now.getHours())}:${pad2(now.getMinutes())}`}</p>
+        </div>
+      </GradientOrb>
+    )
+  }
+  const h = now.getHours() % 12
+  const m = now.getMinutes()
+  const sec = now.getSeconds()
   return (
     <GradientOrb size={180} duration={20} phase={0.4} base="#6f3aa6" layers={layers}>
       <svg className="clock-widget__face" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
@@ -27,9 +56,9 @@ export default function ClockWidget() {
           const r = (a * Math.PI) / 180
           return <circle key={a} cx={CX + 64.6 * Math.sin(r)} cy={CY - 64.6 * Math.cos(r)} r="2.154" fill="#fff" />
         })}
-        {hand(100, 48.31, 100, 96.31)}
-        {hand(102.48, 103.37, 116.66, 127.93)}
-        {hand(96.85, 102.46, 66.99, 136, 0.3)}
+        {hand((h + m / 60) * 30, 4.1, 32.4)}
+        {hand((m + sec / 60) * 6, 3.8, 51.8)}
+        {hand(sec * 6, 3.9, 48.8, 0.3)}
         <circle cx={CX} cy={CY} r="3.69" fill="none" stroke="#fff" strokeWidth="1.846" />
         <g fill="#fff" fontFamily="Inter, sans-serif" fontWeight="400" fontSize="12.308" textAnchor="middle" dominantBaseline="central">
           <text x="103" y="35.5">12</text>

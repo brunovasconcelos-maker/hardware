@@ -14,7 +14,7 @@ const TASKS = [
 ]
 
 // Tarefas (Figma 107:1656).
-export default function TarefasScreen({ tasks = TASKS }) {
+export default function TarefasScreen({ tasks = TASKS, showDots = true }) {
   const doneCount = tasks.filter((t) => t.done).length
   return (
     <FullGradient gradient={tasksGradient} duration={17} phase={0.45}>
@@ -39,7 +39,7 @@ export default function TarefasScreen({ tasks = TASKS }) {
           </li>
         ))}
       </ul>
-      <PageDots active={0} />
+      {showDots && <PageDots active={0} />}
     </FullGradient>
   )
 }

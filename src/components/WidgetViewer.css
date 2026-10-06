@@ -1,0 +1,28 @@
+.widget-viewer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+}
+
+.widget-viewer:active {
+  cursor: grabbing;
+}
+
+.widget-viewer__track {
+  position: absolute;
+  inset: 0;
+}
+
+.widget-viewer__page {
+  position: absolute;
+  top: 0;
+  width: 650px;
+  height: 650px;
+}
+
+/* Pages are square inside the track so neighbouring pages meet cleanly; the device display clips them to the circle. */
+.widget-viewer__page .gradient-orb {
+  border-radius: 0;
+}

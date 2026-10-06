@@ -40,3 +40,23 @@
   left: -90px;
   top: -90px;
 }
+
+/* Click targets (round, so the square corners of an orbiting widget don't catch clicks). */
+.widget-hit,
+.mic-hit {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+
+/* Full-screen widget view, grown from the widget's orbit position. */
+.rest-screen__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 50%;
+  overflow: hidden;
+  will-change: transform, opacity;
+}

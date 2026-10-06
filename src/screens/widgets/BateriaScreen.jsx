@@ -6,7 +6,7 @@ import { batteryGradient } from '../gradients.js'
 import '../screens.css'
 
 // Bateria (Figma 153:2026): charging at 72%.
-export default function BateriaScreen({ percent = 72 }) {
+export default function BateriaScreen({ percent = 72, showDots = true }) {
   return (
     <FullGradient gradient={batteryGradient} duration={18} phase={0.15}>
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
@@ -17,7 +17,7 @@ export default function BateriaScreen({ percent = 72 }) {
         <p className="stat-group__value">{percent}%</p>
         <p className="stat-group__label">Carregando</p>
       </div>
-      <PageDots active={0} />
+      {showDots && <PageDots active={0} />}
     </FullGradient>
   )
 }

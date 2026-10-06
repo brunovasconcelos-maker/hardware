@@ -257,8 +257,16 @@
   width: 240px;
   height: 240px;
 }
+.home-screen__grid-hit {
+  position: absolute;
+  right: 0;
+  top: 252px;
+  width: 145px;
+  height: 145px;
+  cursor: pointer;
+}
 .home-screen__grid {
   position: absolute;
-  left: 549.5px;
-  top: 296.5px;
+  left: 44.5px;
+  top: 44.5px;
 }

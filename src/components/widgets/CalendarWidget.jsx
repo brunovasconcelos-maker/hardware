@@ -1,4 +1,5 @@
 import GradientOrb from '../GradientOrb.jsx'
+import { useNow, WEEKDAYS_SHORT } from '../../hooks/useNow.js'
 import './widgets.css'
 
 const layers = [
@@ -7,12 +8,14 @@ const layers = [
   { type: 'radial', at: '90% 60%', size: '45%', stops: [['#df6192', '0%'], ['rgba(223,97,146,0)', '100%']] },
 ]
 
-export default function CalendarWidget({ weekday = 'Qua', day = 24 }) {
+// Shows the real weekday (pt-BR, e.g. "Qua") and day of the month.
+export default function CalendarWidget({ weekday, day }) {
+  const now = useNow()
   return (
     <GradientOrb size={180} duration={13} phase={0.8} base="#de4cae" layers={layers}>
       <p className="calendar-widget__date">
-        <span>{weekday}</span>
-        <span>{day}</span>
+        <span>{weekday ?? WEEKDAYS_SHORT[now.getDay()]}</span>
+        <span>{day ?? now.getDate()}</span>
       </p>
     </GradientOrb>
   )

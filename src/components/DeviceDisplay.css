@@ -10,3 +10,12 @@
   background: #141515;
   overflow: hidden;
 }
+
+/* Interactions: no text selection or native drag while dragging with mouse/touch. */
+.device-display,
+.device-display * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}

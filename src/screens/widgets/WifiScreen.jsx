@@ -5,7 +5,7 @@ import { batteryGradient } from '../gradients.js'
 import '../screens.css'
 
 // Wi-fi (Figma 157:2081): connected network. Same gradient as Bateria.
-export default function WifiScreen({ network = 'INNERAI-GUEST' }) {
+export default function WifiScreen({ network = 'INNERAI-GUEST', showDots = true }) {
   return (
     <FullGradient gradient={batteryGradient} duration={18} phase={0.15}>
       <div className="wifi-group">
@@ -15,7 +15,7 @@ export default function WifiScreen({ network = 'INNERAI-GUEST' }) {
           <p className="wifi-group__status">Conectado</p>
         </div>
       </div>
-      <PageDots active={1} />
+      {showDots && <PageDots active={1} />}
     </FullGradient>
   )
 }

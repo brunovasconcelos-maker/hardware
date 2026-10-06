@@ -1,37 +1,39 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home.jsx'
+import HomePage from './pages/HomePage.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
-import HomeScreen from './screens/widgets/HomeScreen.jsx'
-import BateriaScreen from './screens/widgets/BateriaScreen.jsx'
-import WifiScreen from './screens/widgets/WifiScreen.jsx'
-import TarefasScreen from './screens/widgets/TarefasScreen.jsx'
-import UsageSemanalScreen from './screens/widgets/UsageSemanalScreen.jsx'
-import UsageDiarioScreen from './screens/widgets/UsageDiarioScreen.jsx'
-import ClimaScreen from './screens/widgets/ClimaScreen.jsx'
-import CalendarioScreen from './screens/widgets/CalendarioScreen.jsx'
-import HoraAScreen from './screens/widgets/HoraAScreen.jsx'
-import HoraBScreen from './screens/widgets/HoraBScreen.jsx'
+import WidgetViewer from './components/WidgetViewer.jsx'
+import { WIDGET_VIEWS } from './screens/widgetViews.jsx'
 
-// Temporary visual-preview routes for the full-screen views (no interactions yet).
+// Temporary preview routes: each widget's full-screen view (swipe sideways to change page).
+// [path, widget view, first page]
 const PREVIEW_ROUTES = [
-  ['/home', HomeScreen],
-  ['/widget/bateria', BateriaScreen],
-  ['/widget/wifi', WifiScreen],
-  ['/widget/tarefas', TarefasScreen],
-  ['/widget/usage-semanal', UsageSemanalScreen],
-  ['/widget/usage-diario', UsageDiarioScreen],
-  ['/widget/clima', ClimaScreen],
-  ['/widget/calendario', CalendarioScreen],
-  ['/widget/hora-a', HoraAScreen],
-  ['/widget/hora-b', HoraBScreen],
+  ['/widget/bateria', 'battery', 0],
+  ['/widget/wifi', 'battery', 1],
+  ['/widget/tarefas', 'tasks', 0],
+  ['/widget/usage-semanal', 'usage', 0],
+  ['/widget/usage-diario', 'usage', 1],
+  ['/widget/clima', 'weather', 0],
+  ['/widget/calendario', 'calendar', 0],
+  ['/widget/hora-a', 'clock', 0],
+  ['/widget/hora-b', 'clock', 1],
 ]
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      {PREVIEW_ROUTES.map(([path, Screen]) => (
-        <Route key={path} path={path} element={<ScreenPreview><Screen /></ScreenPreview>} />
+      <Route path="/home" element={<HomePage />} />
+      {PREVIEW_ROUTES.map(([path, view, page]) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            <ScreenPreview>
+              <WidgetViewer key={path} pageCount={WIDGET_VIEWS[view].pageCount} initialIndex={page} renderPage={WIDGET_VIEWS[view].renderPage} />
+            </ScreenPreview>
+          }
+        />
       ))}
       <Route path="*" element={<Home />} />
     </Routes>

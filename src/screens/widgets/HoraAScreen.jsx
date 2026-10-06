@@ -5,11 +5,11 @@ import { clockGradient } from '../gradients.js'
 import '../screens.css'
 
 // Hora, style A (Figma 107:1427): analog clock.
-export default function HoraAScreen() {
+export default function HoraAScreen({ showDots = true }) {
   return (
     <FullGradient gradient={clockGradient} duration={20} phase={0.05}>
       <ClockFace />
-      <PageDots active={0} />
+      {showDots && <PageDots active={0} />}
     </FullGradient>
   )
 }
