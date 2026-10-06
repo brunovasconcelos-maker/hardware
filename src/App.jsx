@@ -44,6 +44,8 @@ export default function App() {
         <Route path="/voz/pensando" element={<VoiceThinkingPreview />} />
         <Route path="/voz/resultado" element={<VoiceResultPreview />} />
         <Route path="/historico" element={<Stage />} />
+        <Route path="/configuracoes" element={<Stage />} />
+        <Route path="/configuracoes/cores" element={<Stage />} />
         <Route path="*" element={<Stage />} />
       </Routes>
     </>
