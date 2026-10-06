@@ -31,7 +31,7 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, o
         <CirclesFour size={56} weight="regular" color="rgba(255,255,255,0.5)" />
       </Grid>
       <Ok className="result-screen__ok" {...okProps}>
-        <Check size={40} weight="regular" color="#000000" />
+        <Check size={40} weight="regular" color="currentColor" />
       </Ok>
     </div>
   )

@@ -12,10 +12,16 @@
 .home-screen__prompt {
   position: absolute;
   margin: 0;
-  color: #ffffff;
+  color: var(--fg);
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 400;
+}
+
+/* Homepage texts sit on the dark display, not on a gradient: they keep their color in every theme. */
+.home-screen__greeting,
+.home-screen__prompt {
+  color: #ffffff;
 }
 
 /* Bateria / Usage: [icon] big value + label, centered vertically */
@@ -204,8 +210,8 @@
 }
 .calendar-month__cell--today {
   border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
+  background: var(--fg);
+  color: var(--fg-contrast);
 }
 
 /* Hora */

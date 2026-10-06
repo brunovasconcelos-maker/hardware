@@ -5,7 +5,7 @@
 .calendar-widget__date {
   position: absolute;
   margin: 0;
-  color: #ffffff;
+  color: var(--fg);
   font-family: 'Inter', sans-serif;
   font-style: normal;
 }

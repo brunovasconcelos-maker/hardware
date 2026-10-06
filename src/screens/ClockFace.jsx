@@ -38,9 +38,9 @@ export default function ClockFace() {
       <svg className="clock-face" width="650" height="650" viewBox="0 0 650 650" aria-hidden="true">
         {DOT_ANGLES.map((a) => {
           const r = (a * Math.PI) / 180
-          return <circle key={a} cx={CX + DOT_RADIUS * Math.sin(r)} cy={CY - DOT_RADIUS * Math.cos(r)} r="6.312" fill="#fff" />
+          return <circle key={a} cx={CX + DOT_RADIUS * Math.sin(r)} cy={CY - DOT_RADIUS * Math.cos(r)} r="6.312" fill="currentColor" />
         })}
-        <g stroke="#fff" strokeWidth="5.41" strokeLinecap="round" fill="none">
+        <g stroke="currentColor" strokeWidth="5.41" strokeLinecap="round" fill="none">
           <Hand angle={(h + m / 60) * 30} r0={12} r1={95} />
           <Hand angle={(m + sec / 60) * 6} r0={11.18} r1={151.84} />
           <Hand angle={sec * 6} r0={11.5} r1={142.9} opacity={0.3} />

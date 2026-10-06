@@ -9,7 +9,7 @@
 .gradient-orb__content {
   position: absolute;
   inset: 0;
-  color: #ffffff;
+  color: var(--fg);
 }
 
 /* Gradient drift: transform-only, compositor-friendly. The circle clips everything. */

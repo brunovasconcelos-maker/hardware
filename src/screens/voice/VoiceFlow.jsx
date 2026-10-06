@@ -234,7 +234,7 @@ export default function VoiceFlow({ name = 'Bruno', result = VOICE_RESULTS[0], o
           <MicButton size={ORB_HOME} showIcon={false} style={{ width: '100%', height: '100%' }} />
         </WidgetHit>
       </div>
-      <Microphone ref={icon} className="voice-flow__icon" size={80} weight="light" color="#ffffff" style={{ opacity: inHome ? 1 : 0 }} />
+      <Microphone ref={icon} className="voice-flow__icon" size={80} weight="light" color="currentColor" style={{ opacity: inHome ? 1 : 0, color: 'var(--fg)' }} />
 
       <div ref={shapesWrap} className="voice-flow__layer" style={{ opacity: showShapes ? 1 : 0 }}>
         <ThinkingShapes ref={shapes} frame={1} />

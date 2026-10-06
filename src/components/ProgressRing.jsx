@@ -3,13 +3,13 @@ export default function ProgressRing({ value, size = 180, radius = 80, stroke = 
   const c = size / 2
   return (
     <svg className="progress-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" style={{ position: 'absolute', inset: 0 }}>
-      <circle cx={c} cy={c} r={radius} fill="none" stroke="#ffffff" strokeOpacity={trackOpacity} strokeWidth={stroke} />
+      <circle cx={c} cy={c} r={radius} fill="none" stroke="currentColor" strokeOpacity={trackOpacity} strokeWidth={stroke} />
       <circle
         cx={c}
         cy={c}
         r={radius}
         fill="none"
-        stroke="#ffffff"
+        stroke="currentColor"
         strokeWidth={stroke}
         strokeLinecap="round"
         pathLength="100"
