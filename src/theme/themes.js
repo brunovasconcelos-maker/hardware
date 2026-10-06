@@ -1,4 +1,4 @@
-import { ORBS, COLORIDO_COLORS } from './orbs.js'
+import { COLORIDO_COLORS } from './orbs.js'
 
 // ---------------------------------------------------------------------------------------------------------------
 // Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch, except Preto, see below).
@@ -94,44 +94,62 @@ function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, swatch }) {
   return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], accent: ACCENTS[paletteKey], grain: false, orbs }
 }
 
-// Verde uses roles instead of the 100–700 scale: four base tones carry the gradients, the navy "depth" tone is only a deep
-// shadow (one small radial blob in some orbs, never dominant), yellow is the accent glow and navy is also the foreground.
+// Verde uses roles instead of the 100–700 scale (reference: Figma 204:2847). The orbs mix green, yellow and blue:
+//  - four green base tones carry the gradients (the orb's own color slots below, matched to the reference by position),
+//  - yellow is a strong soft glow, mostly at the bottom (extra `--sun` layer, up to ~30% of the orb),
+//  - navy is a real gradient color: a soft dark corner in some orbs (extra `--depth` layer, up to ~25%, never on all).
+// Foreground on the gradients is white, like the other themes.
 export const VERDE = {
   main: '#C2D09F', // selector swatch
   base: { olive: '#758256', sage: '#C2D09F', light: '#E3E9CD', mint: '#C9EBDA' },
   depth: '#090F45',
-  accent: '#F6EE45',
+  sun: '#F6EE45',
 }
-const { olive, sage, light, mint } = VERDE.base
-// Base tones per widget group (a different combination for each) and whether the group gets the navy shadow.
-const VERDE_GROUPS = {
-  mic: { tones: [olive, sage, mint], depth: true },
-  tasks: { tones: [sage, light, olive], depth: true },
-  weather: { tones: [light, mint, sage] },
-  usage: { tones: [olive, light, mint], depth: true },
-  usageDaily: { tones: [sage, mint, light] },
-  battery: { tones: [sage, olive, mint], depth: true },
-  calendar: { tones: [light, sage, olive] },
-  clockA: { tones: [olive, sage, light, mint], depth: true },
-  clockB: { tones: [sage, light, mint] },
+const { olive: O, sage: S, light: L, mint: M } = VERDE.base
+// Color per slot of each orb (slot 0 = base; the slot order/positions are the orb compositions in orbs.js).
+const VERDE_COLORS = {
+  mic: [L, S, M, O, O, S, M, L],
+  tasks: [S, L, M, L, L, M, S, O],
+  weather: [O, S, O, S, L, S],
+  usage: [S, S, L, L, M, M, S, S, L, L],
+  calendar: [M, O, M, L],
+  battery: [S, L, M, S, S, L, L, M],
+  clock: [S, S, O, L, M, S, S, M, M],
+  tasksFull: [L, S, M, L, L, S, S],
+  weatherFull: [O, S, O, S, L, S, S],
+  usageWeekly: [S, S, L, M, M, S, S, L, L],
+  usageDaily: [S, L, S, M, O, M, M, L, L],
+  batteryFull: [L, L, S, L, O, S, L, M],
+  calendarFull: [O, S, M, S, L],
+  clockFull: [S, S, O, M, M, S, M, M, L],
+  digital: [O, S, M, M, O, S, M, M, L],
 }
 
-// The depth slot is the darkest slot that only appears in a radial blob (so it fades out) and is not the orb's base.
-function verdeColors(orbId) {
-  const colors = COLORIDO_COLORS[orbId]
-  const { tones, depth } = VERDE_GROUPS[GROUP_OF[orbId]]
-  const out = mapToTones(colors, tones)
-  if (depth) {
-    const radialOnly = new Set()
-    const other = new Set([0])
-    for (const l of ORBS[orbId].layers) for (const [c] of l.stops) (l.type === 'radial' ? radialOnly : other).add(c)
-    const candidates = [...radialOnly].filter((c) => c !== 'transparent' && !other.has(c))
-    if (candidates.length) {
-      const dark = candidates.reduce((a, b) => (luminance(colors[a]) <= luminance(colors[b]) ? a : b))
-      out[dark] = VERDE.depth
-    }
-  }
-  return out
+// Extra glow layers (center + radius, % of the orb), only on the orbs that have one in the reference. The disc areas
+// (clipped by the circle) are ~18–25% for navy and ~20–28% for yellow. Their colors are the `--depth` / `--sun` tokens,
+// transparent in every theme except Verde.
+export const DEPTH_GLOWS = {
+  mic: { at: '50% 0%', size: '36%' },
+  usage: { at: '0% 0%', size: '54%' },
+  usageWeekly: { at: '0% 0%', size: '55%' },
+  calendar: { at: '100% 100%', size: '52%' },
+  calendarFull: { at: '100% 100%', size: '54%' },
+  clock: { at: '12% 92%', size: '38%' },
+}
+export const SUN_GLOWS = {
+  mic: { at: '100% 72%', size: '40%' },
+  tasks: { at: '85% 82%', size: '38%' },
+  tasksFull: { at: '80% 95%', size: '45%' },
+  weather: { at: '15% 92%', size: '42%' },
+  weatherFull: { at: '10% 95%', size: '50%' },
+  usage: { at: '62% 104%', size: '44%' },
+  usageWeekly: { at: '55% 108%', size: '48%' },
+  usageDaily: { at: '55% 108%', size: '48%' },
+  calendar: { at: '10% 15%', size: '37%' },
+  calendarFull: { at: '12% 12%', size: '37%' },
+  battery: { at: '50% 102%', size: '41%' },
+  batteryFull: { at: '90% 90%', size: '47%' },
+  clock: { at: '95% 88%', size: '41%' },
 }
 
 export const THEMES = {
@@ -156,13 +174,15 @@ export const THEMES = {
     id: 'verde',
     label: 'Verde',
     swatch: VERDE.main,
-    fg: VERDE.depth,
-    fgContrast: light,
-    okBg: light,
+    fg: '#ffffff',
+    fgContrast: VERDE.depth, // text on the white "today" circle
+    okBg: L,
     okFg: VERDE.depth,
-    accent: VERDE.accent,
+    accent: 'transparent', // the yellow is the `sun` glow
+    depth: VERDE.depth,
+    sun: VERDE.sun,
     grain: true,
-    orbs: Object.fromEntries(Object.keys(COLORIDO_COLORS).map((id) => [id, verdeColors(id)])),
+    orbs: VERDE_COLORS,
   },
   laranja: monochrome('laranja', 'Laranja', 'laranja', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),
 }

@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
-import { THEMES, DEFAULT_THEME, glowOf } from './themes.js'
+import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, SUN_GLOWS } from './themes.js'
 
 // Theme runtime. Every theme color is a CSS custom property registered as a <color>, set on <html>:
 //   --o-<orb>-<slot>   gradient colors of each orb (the orb compositions live in orbs.js)
@@ -8,13 +8,14 @@ import { THEMES, DEFAULT_THEME, glowOf } from './themes.js'
 //   --ok-bg / --ok-fg      Result OK button and its check icon
 //   --grain                1 when the theme uses the grain overlay, else 0 (see useGrain)
 //   --accent               complementary glow added to every orb (transparent in Colorido)
+//   --depth / --sun        extra navy shadow / yellow glow layers on the orbs that define one (transparent unless a theme sets them: Verde)
 // Components only reference these variables (never literal colors), so switching themes restyles every screen, and
 // the registered properties let the browser crossfade between themes without touching the animated gradient layers.
 const KEY = 'hardware.theme'
 const FADE_MS = 400
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
-const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent']
+const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent', '--depth', '--sun']
 const GRAIN_VAR = '--grain'
 const ALL_VARS = [...TOKEN_VARS, ...Object.entries(COLORIDO_COLORS).flatMap(([id, colors]) => colors.map((_, i) => orbVar(id, i)))]
 
@@ -26,7 +27,12 @@ export function orbProps(id) {
   cache[id] = {
     base: color(0),
     layers: ORBS[id].layers.map((l) => ({ ...l, stops: l.stops.map(([c, pos]) => [color(c), pos]) })),
-    accent: { ...glowOf(id), color: 'var(--accent)' },
+    // top first: depth, sun, accent (the accent keeps its position in the layer order)
+    glows: [
+      DEPTH_GLOWS[id] && { ...DEPTH_GLOWS[id], hold: 30, color: 'var(--depth)' },
+      SUN_GLOWS[id] && { ...SUN_GLOWS[id], hold: 30, color: 'var(--sun)' },
+      { ...glowOf(id), color: 'var(--accent)' },
+    ].filter(Boolean),
   }
   return cache[id]
 }
@@ -96,6 +102,8 @@ export function applyTheme(id) {
   root.style.setProperty('--ok-bg', t.okBg)
   root.style.setProperty('--ok-fg', t.okFg)
   root.style.setProperty('--accent', t.accent)
+  root.style.setProperty('--depth', t.depth ?? 'transparent')
+  root.style.setProperty('--sun', t.sun ?? 'transparent')
   root.style.setProperty(GRAIN_VAR, t.grain ? '1' : '0')
   setGrain(!!t.grain)
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))

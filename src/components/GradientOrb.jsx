@@ -29,13 +29,13 @@ const blurFor = (size) => Math.min(60, Math.max(40, size * 0.085))
 
 // Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Each layer is its own
 // element that drifts with transform-only keyframes inside the clipped circle. `duration` (s) and `phase` (0–1)
-// desynchronize orbs. A static grain overlay shows when the theme's `grain` token is on. `accent` ({ at, size, color }) is an extra soft glow on top of all layers.
+// desynchronize orbs. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (theme accent, and Verde's depth/sun).
 const DRIFT_VARIANTS = ['a', 'b', 'c']
 export default function GradientOrb({
   size = 180,
   base,
   layers = [],
-  accent,
+  glows = [],
   duration = 16,
   phase = 0,
   className = '',
@@ -47,7 +47,11 @@ export default function GradientOrb({
   const blur = blurFor(size)
   const bx = 1 + 2 * ((2.5 * blur) / size) // oversized box, in orbs
   const drawn = layers.map((layer, i) => ({ layer, i }))
-  if (accent) drawn.unshift({ layer: { type: 'radial', at: accent.at, size: accent.size, stops: [[accent.color, '0%'], ['transparent', '100%']] }, i: layers.length })
+  // bottom-most glow first, so the first glow ends up on top; the last glow (the accent) is numbered right after the layers
+  for (let k = glows.length - 1; k >= 0; k--) {
+    const g = glows[k]
+    drawn.unshift({ layer: { type: 'radial', at: g.at, size: g.size, stops: g.hold ? [[g.color, '0%'], [g.color, `${g.hold}%`], ['transparent', '100%']] : [[g.color, '0%'], ['transparent', '100%']] }, i: layers.length + glows.length - 1 - k })
+  }
   return (
     <div
       className={`gradient-orb ${className}`}
