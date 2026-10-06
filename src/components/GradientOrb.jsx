@@ -43,7 +43,8 @@ export default function GradientOrb({
         ...style,
       }}
     >
-      {layers.map((layer, i) => (
+      {/* first layer = top, so paint the array in reverse DOM order */}
+      {layers.map((layer, i) => ({ layer, i })).reverse().map(({ layer, i }) => (
         <div
           key={i}
           className={`gradient-orb__layer gradient-orb__layer--${layer.type === 'linear' ? 'cover' : 'blob'}-${DRIFT_VARIANTS[i % 3]}`}

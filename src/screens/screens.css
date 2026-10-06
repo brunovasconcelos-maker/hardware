@@ -1,0 +1,264 @@
+/* Full-screen views: Figma coordinates on a 650x650 canvas. */
+.stat-group,
+.wifi-group,
+.weather-screen,
+.tasks-screen__count,
+.tasks-screen__list,
+.digital-clock,
+.calendar-month__title,
+.calendar-month__grid,
+.clock-face__numeral,
+.home-screen__greeting,
+.home-screen__prompt {
+  position: absolute;
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+/* Bateria / Usage: [icon] big value + label, centered vertically */
+.stat-group {
+  left: 194px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 262px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 1.2;
+}
+.stat-group__icon {
+  position: relative;
+  flex: none;
+  width: 56px;
+  height: 75px;
+  margin-bottom: -10px;
+  overflow: hidden;
+}
+.stat-group__value {
+  margin: 0 0 -10px;
+  font-weight: 500;
+  font-size: 140px;
+  letter-spacing: -5.6px;
+  white-space: nowrap;
+}
+.stat-group__label {
+  margin: 0;
+  font-size: 32px;
+  white-space: nowrap;
+}
+
+/* Wi-fi */
+.wifi-group {
+  left: calc(50% + 1px);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.wifi-group__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.wifi-group__name {
+  margin: 0;
+  font-weight: 500;
+  font-size: 56px;
+  letter-spacing: -2.24px;
+}
+.wifi-group__status {
+  margin: 0;
+  font-size: 32px;
+}
+
+/* Clima */
+.weather-screen {
+  left: 141px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 368px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  line-height: 1.2;
+}
+.weather-screen__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+.weather-screen__temp {
+  margin: 0;
+  font-weight: 500;
+  font-size: 160px;
+  letter-spacing: -6.4px;
+  white-space: nowrap;
+}
+.weather-screen__city {
+  margin: 0;
+  font-size: 32px;
+  white-space: nowrap;
+}
+
+/* Tarefas */
+.tasks-screen__line {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.tasks-screen__count {
+  left: 50%;
+  top: 95px;
+  transform: translateX(-50%);
+  width: 320px;
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.tasks-screen__list {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.tasks-screen__item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.tasks-screen__item svg {
+  flex: none;
+}
+.tasks-screen__label {
+  width: 320px;
+  font-size: 32px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Calendário */
+.calendar-month__title {
+  left: 50%;
+  top: 68px;
+  transform: translateX(-50%);
+  width: 368px;
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.84px;
+}
+.calendar-month__grid {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.calendar-month__grid--tight {
+  gap: 4px;
+}
+.calendar-month__row {
+  display: flex;
+  gap: 8px;
+}
+.calendar-month__row--muted {
+  opacity: 0.5;
+}
+.calendar-month__cell {
+  box-sizing: border-box;
+  width: 56px;
+  height: 56px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.84px;
+  text-align: center;
+  white-space: nowrap;
+}
+.calendar-month__cell--muted {
+  opacity: 0.5;
+}
+.calendar-month__cell--today {
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Hora */
+.clock-face {
+  position: absolute;
+  inset: 0;
+}
+.clock-face__numeral {
+  font-size: 36.068px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.digital-clock {
+  left: 325.5px;
+  top: 217px;
+  transform: translateX(-50%);
+  font-weight: 500;
+  font-size: 180px;
+  line-height: 1.2;
+  letter-spacing: -5.4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Homepage */
+.home-screen {
+  position: absolute;
+  inset: 0;
+}
+.home-screen__greeting,
+.home-screen__prompt {
+  left: 325px;
+  transform: translateX(-50%);
+  width: 368px;
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.2;
+}
+.home-screen__greeting {
+  top: 127px;
+}
+.home-screen__prompt {
+  top: 485px;
+}
+.home-screen__mic {
+  position: absolute;
+  left: 205px;
+  top: 205px;
+  width: 240px;
+  height: 240px;
+}
+.home-screen__grid {
+  position: absolute;
+  left: 549.5px;
+  top: 296.5px;
+}
