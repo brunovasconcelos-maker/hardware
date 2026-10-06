@@ -7,7 +7,7 @@ import '../screens.css'
 // Usage diário (Figma 107:1941): 90% of the daily limit, with warning icon.
 export default function UsageDiarioScreen({ percent = 90, showDots = true }) {
   return (
-    <FullGradient orb="usageDaily" duration={19} phase={0.3}>
+    <FullGradient orb="usageDaily">
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
       <div className="stat-group">
         <div className="stat-group__icon">

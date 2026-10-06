@@ -16,7 +16,7 @@ const TASKS = [
 export default function TarefasScreen({ tasks = TASKS, showDots = true }) {
   const doneCount = tasks.filter((t) => t.done).length
   return (
-    <FullGradient orb="tasksFull" duration={17} phase={0.45}>
+    <FullGradient orb="tasksFull">
       <svg className="tasks-screen__line" width="650" height="650" viewBox="0 0 650 650" aria-hidden="true">
         <g stroke="currentColor" strokeWidth="2" fill="none">
           <line x1="155" y1="216" x2="155" y2="270" />

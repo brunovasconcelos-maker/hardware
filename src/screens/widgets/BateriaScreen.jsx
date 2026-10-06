@@ -7,7 +7,7 @@ import '../screens.css'
 // Bateria (Figma 153:2026): charging at 72%.
 export default function BateriaScreen({ percent = 72, showDots = true }) {
   return (
-    <FullGradient orb="batteryFull" duration={21} phase={0.15}>
+    <FullGradient orb="batteryFull">
       <ProgressRing value={percent / 100} size={650} radius={230} stroke={24} />
       <div className="stat-group">
         <div className="stat-group__icon">

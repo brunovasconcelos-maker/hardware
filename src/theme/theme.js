@@ -103,13 +103,13 @@ export function initTheme() {
   }
 }
 
-// Orbs that can actually be seen right now: not under a fully covering screen, not a paused offscreen widget page, not
+// Orbs that can actually be seen right now: not under a fully covering screen, not an offscreen widget page, not
 // hidden under the (opaque) Homepage layer.
 function visibleOrbIds() {
   const ids = new Set()
   const homepageUp = !!document.querySelector('.drag-up-layer')
   for (const el of document.querySelectorAll('.gradient-orb[data-orb]')) {
-    if (el.closest('.stage__flow--hidden, .widget-viewer__page[data-paused]')) continue
+    if (el.closest('.stage__flow--hidden, .widget-viewer__page[data-offscreen]')) continue
     if (el.closest('[data-covered]') && !el.closest('.rest-screen__overlay')) continue // the open widget overlay is what covers it
     if (homepageUp && el.closest('.rest-screen')) continue
     ids.add(el.dataset.orb)

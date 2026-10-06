@@ -27,12 +27,13 @@ export function buildLayer(layer, bx = 1) {
 const EMPTY = []
 const blurFor = (size) => Math.min(60, Math.max(40, size * 0.085))
 
-// Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Each layer is its own
-// element that drifts with transform-only keyframes inside the clipped circle. `duration` (s) and `phase` (0–1)
-// desynchronize orbs. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (theme accent, and Verde's depth/sun).
-const DRIFT_VARIANTS = ['a', 'b', 'c']
+// Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Nothing in it animates: each layer is
+// its own element at a fixed resting scale inside the clipped circle. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (theme accent, and Verde's depth/sun).
+// Resting scale of each layer (blob = radial glow, cover = opaque linear layer), cycling over three variants so neighboring
+// layers are not identical. This is the neutral pose the former drift animation started its loop from.
+const REST_SCALE = { blob: [1.05, 1.3, 1.4], cover: [1.25, 1.4, 1.3] }
 
-// The blurred, drifting layers. Memoized: a parent that re-renders every second (the clock widgets) must not rebuild the
+// The blurred, static layers. Memoized: a parent that re-renders every second (the clock widgets) must not rebuild the
 // gradient strings of every layer. `layers` / `glows` come from the cached orbProps(), so they are referentially stable.
 const OrbLayers = memo(function OrbLayers({ layers, glows, bx }) {
   const drawn = layers.map((layer, i) => ({ layer, i }))
@@ -47,15 +48,15 @@ const OrbLayers = memo(function OrbLayers({ layers, glows, bx }) {
       {[...drawn].reverse().map(({ layer, i }) => (
         <div
           key={i}
-          className={`gradient-orb__layer gradient-orb__layer--${layer.type === 'linear' ? 'cover' : 'blob'}-${DRIFT_VARIANTS[i % 3]}`}
-          style={{ background: buildLayer(layer, bx), animationDirection: i % 2 ? 'reverse' : 'normal' }}
+          className="gradient-orb__layer"
+          style={{ background: buildLayer(layer, bx), transform: `scale(${REST_SCALE[layer.type === 'linear' ? 'cover' : 'blob'][i % 3]})` }}
         />
       ))}
     </div>
   )
 })
 
-// Static grain: not part of the drifting/blurred layers, on top of the gradient; always mounted, its opacity follows the
+// Static grain: not part of the blurred layers, on top of the gradient; always mounted, its opacity follows the
 // theme's --grain token.
 const Grain = memo(function Grain({ filterId }) {
   return (
@@ -80,8 +81,6 @@ export default function GradientOrb({
   base,
   layers = EMPTY,
   glows = EMPTY,
-  duration = 16,
-  phase = 0,
   className = '',
   style,
   children,
@@ -97,9 +96,6 @@ export default function GradientOrb({
         width: size,
         height: size,
         backgroundColor: base,
-        '--orb-duration': `${duration}s`,
-        '--orb-delay': `${-duration * phase}s`,
-        '--bx': bx,
         '--blur': `${(blur / size) * 100}cqw`,
         '--blur-px': `${blur}px`,
         ...style,

@@ -59,10 +59,8 @@
   will-change: transform, opacity;
 }
 
-/* Completely covered by another screen: nothing here is visible, so pause every animation (they resume in place). */
+/* Completely covered by another screen: nothing here is visible, so pause the orbit (it resumes in place). */
 .rest-screen[data-covered] .rest-screen__orbit,
-.rest-screen[data-covered] .rest-screen__orbit *,
-.rest-screen[data-covered] .rest-screen__mic,
-.rest-screen[data-covered] .rest-screen__mic * {
-  animation-play-state: paused !important; /* not the open widget overlay, which is what covers it */
+.rest-screen[data-covered] .rest-screen__orbit * {
+  animation-play-state: paused !important; /* the orbit (and its upright counter-rotation); not the open widget overlay */
 }

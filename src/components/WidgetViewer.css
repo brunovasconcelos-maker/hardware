@@ -23,8 +23,3 @@
   border-radius: 50%;
   overflow: hidden;
 }
-
-/* Offscreen neighbor pages: paused gradient drift (see syncPaused). */
-.widget-viewer__page[data-paused] * {
-  animation-play-state: paused !important;
-}

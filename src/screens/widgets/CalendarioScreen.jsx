@@ -10,7 +10,7 @@ export default function CalendarioScreen({ month, year, highlightDay }) {
   const y = year ?? now.getFullYear()
   const today = highlightDay ?? (m === now.getMonth() + 1 && y === now.getFullYear() ? now.getDate() : undefined)
   return (
-    <FullGradient orb="calendarFull" duration={16.5} phase={0.7}>
+    <FullGradient orb="calendarFull">
       <CalendarMonth month={m} year={y} highlightDay={today} />
     </FullGradient>
   )

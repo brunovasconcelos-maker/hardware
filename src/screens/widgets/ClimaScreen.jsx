@@ -5,7 +5,7 @@ import '../screens.css'
 // Clima (Figma 107:1626).
 export default function ClimaScreen({ temperature = 21, city = 'São Paulo, SP' }) {
   return (
-    <FullGradient orb="weatherFull" duration={20.5} phase={0.8}>
+    <FullGradient orb="weatherFull">
       <div className="weather-screen">
         <Cloud size={120} weight="regular" color="currentColor" />
         <div className="weather-screen__text">

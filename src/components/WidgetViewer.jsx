@@ -35,17 +35,17 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
   const inRange = (i) => i >= min && i <= max
   const visible = [index - 1, index, index + 1].filter(inRange)
 
-  // Only the centered page animates its gradient. The neighbors are paused (data-paused) and resume the moment a pointer goes
-  // down (a swipe can reveal them from the first pixel), so a page never shows frozen or pops while it slides in; they pause
-  // again once the viewer settles. Done on the DOM (not through React) because pointer events change it between renders.
-  const syncPaused = (resumeNeighbors = false) => {
+  // Marks the pages that are not on screen (data-offscreen) for the theme color morph, which skips them. The neighbors count as
+  // on screen from the moment a pointer goes down (a swipe can reveal them from the first pixel) until the viewer settles.
+  // Done on the DOM (not through React) because pointer events change it between renders.
+  const syncOffscreen = (revealNeighbors = false) => {
     for (const el of trackRef.current?.children ?? []) {
       const page = Number(el.dataset.page)
-      if (page === indexRef.current || resumeNeighbors) el.removeAttribute('data-paused')
-      else el.setAttribute('data-paused', '')
+      if (page === indexRef.current || revealNeighbors) el.removeAttribute('data-offscreen')
+      else el.setAttribute('data-offscreen', '')
     }
   }
-  useLayoutEffect(() => syncPaused(), [index]) // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => syncOffscreen(), [index]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const rubber = (dx) => {
     const target = indexRef.current - Math.sign(dx)
@@ -59,7 +59,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     anim.cancel()
     el.style.transform = ''
     busy.current = false
-    syncPaused()
+    syncOffscreen()
   }
 
   async function changePage(dir, fromX) {
@@ -85,7 +85,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     if (disabled || busy.current || drag.current) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
     e.preventDefault()
-    syncPaused(true)
+    syncOffscreen(true)
     e.currentTarget.setPointerCapture(e.pointerId)
     drag.current = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lock: null, dx: 0, dy: 0, samples: [{ t: e.timeStamp, x: e.clientX, y: e.clientY }] }
   }
@@ -110,7 +110,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     drag.current = null
     if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId)
     if (e.type === 'pointercancel') d.lock = null
-    if (!d.lock) syncPaused() // a tap or cancelled press: no snap-back will follow
+    if (!d.lock) syncOffscreen() // a tap or cancelled press: no snap-back will follow
 
     if (d.lock === 'h' && pageCount > 1) {
       const x = rubber(d.dx)

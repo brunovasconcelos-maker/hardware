@@ -7,7 +7,7 @@ import './widgets.css'
 export default function CalendarWidget({ weekday, day }) {
   const now = useNow()
   return (
-    <GradientOrb size={180} duration={16} phase={0.8} {...orbProps('calendar')}>
+    <GradientOrb size={180} {...orbProps('calendar')}>
       <p className="calendar-widget__date">
         <span>{weekday ?? WEEKDAYS_SHORT[now.getDay()]}</span>
         <span>{day ?? now.getDate()}</span>

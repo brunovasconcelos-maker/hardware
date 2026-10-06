@@ -8,7 +8,7 @@ export default function HoraBScreen({ time, showDots = true }) {
   const now = useNow()
   const label = time ?? `${pad2(now.getHours())}:${pad2(now.getMinutes())}`
   return (
-    <FullGradient orb="digital" duration={15.5} phase={0.5}>
+    <FullGradient orb="digital">
       <p className="digital-clock">{label}</p>
       {showDots && <PageDots active={1} />}
     </FullGradient>
