@@ -1,7 +1,7 @@
 const KEY = 'hardware.history'
 
 // History of saved voice answers, stored in localStorage as an array (oldest first):
-// [{ timestamp (ISO 8601), title, date, subtitle, body }]
+// [{ id, timestamp (ISO 8601), title, date, subtitle, body }]  (id = the mock response's id)
 export function loadHistory() {
   try {
     const raw = window.localStorage.getItem(KEY)
@@ -14,7 +14,7 @@ export function loadHistory() {
 
 // Appends `result` to the history. Returns the saved entry, or null if storage is unavailable (reported in the console).
 export function saveToHistory(result) {
-  const entry = { timestamp: new Date().toISOString(), title: result.title, date: result.date, subtitle: result.subtitle, body: result.body }
+  const entry = { id: result.id, timestamp: new Date().toISOString(), title: result.title, date: result.date, subtitle: result.subtitle, body: result.body }
   try {
     window.localStorage.setItem(KEY, JSON.stringify([...loadHistory(), entry]))
     return entry

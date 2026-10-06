@@ -5,7 +5,7 @@ import VoiceLines from '../../components/VoiceLines.jsx'
 import ThinkingShapes, { THINKING_FRAMES } from '../../components/ThinkingShapes.jsx'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import ResultScreen from './ResultScreen.jsx'
-import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
+import { pickRandomResult } from '../../mocks/voiceResults.js'
 import { FIGMA_LENGTHS } from '../../components/voiceSpokes.js'
 import { createVoiceSimulator } from '../../voiceSim.js'
 import { speakResult, cancelSpeech } from '../../speech.js'
@@ -48,8 +48,11 @@ function thinkingHeights(ms) {
 //  home -> starting (400ms) -> idle (dots, 1s) -> recording (fake voice) -> sending -> thinking (3.5s) -> result
 //  result -> leaving (OK) -> home
 // Visual design comes from the Homepage / recording / thinking / result screens; this component only animates them.
-export default function VoiceFlow({ name = 'Bruno', result = VOICE_RESULTS[0], onGridClick, onBusyChange }) {
+// `fixedResult` (optional) forces one answer; by default each sent recording shows a random mock response (never the
+// same one twice in a row).
+export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridClick, onBusyChange }) {
   const [phase, setPhase] = useState('home')
+  const [result, setResult] = useState(fixedResult ?? null) // the answer shown / read / saved for the current session
   const prevPhase = useRef(null)
   const homeUi = useRef(null)
   const orb = useRef(null)
@@ -75,7 +78,7 @@ export default function VoiceFlow({ name = 'Bruno', result = VOICE_RESULTS[0], o
 
   // Speech: starts when the result appears and stops when it is left (OK) or the flow unmounts.
   useEffect(() => {
-    if (phase !== 'result') return undefined
+    if (phase !== 'result' || !result) return undefined
     const speech = speakResult(result)
     return () => speech.cancel()
   }, [phase, result])
@@ -203,11 +206,14 @@ export default function VoiceFlow({ name = 'Bruno', result = VOICE_RESULTS[0], o
 
   const onOrbClick = () => {
     if (phase === 'home') setPhase('starting')
-    else if (phase === 'recording') setPhase('sending')
+    else if (phase === 'recording') {
+      setResult(fixedResult ?? pickRandomResult())
+      setPhase('sending')
+    }
   }
 
   const onOk = () => {
-    if (phase !== 'result') return
+    if (phase !== 'result' || !result) return
     cancelSpeech() // stop reading immediately
     saveToHistory(result)
     setPhase('leaving')
@@ -240,7 +246,7 @@ export default function VoiceFlow({ name = 'Bruno', result = VOICE_RESULTS[0], o
         <ThinkingShapes ref={shapes} frame={1} />
       </div>
 
-      {showResult && (
+      {showResult && result && (
         <div ref={resultWrap} className="voice-flow__result">
           <ResultScreen result={result} onGridClick={() => onGridClick?.()} onOkClick={onOk} />
         </div>
