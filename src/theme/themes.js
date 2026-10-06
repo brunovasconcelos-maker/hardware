@@ -4,7 +4,6 @@ import { COLORIDO_COLORS } from './orbs.js'
 // Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch, except Preto, see below).
 export const PALETTES = {
   preto: { 100: '#9897D5', 200: '#7A76BF', 300: '#605AA7', 400: '#4B438E', 500: '#3C3476', 600: '#2F2863', 700: '#261F52' },
-  offwhite: { 100: '#FAF6F2', 200: '#F4EFEA', 300: '#EFE9E2', 400: '#E9E2DA', 500: '#A8A097', 600: '#6C6359', 700: '#352C21' },
 }
 
 // Orbs that belong to the same widget share one tone combination (compact widget + its full screens).
@@ -22,20 +21,16 @@ const GROUP_OF = {
 
 // Gradient recipes for the monochrome themes: 2–4 palette tones per widget, a different combination for each widget.
 // Each orb keeps its Colorido composition; its slots are mapped onto these tones by lightness (see mapToTones).
-//   Preto: dark tones (300–700) · Off white: light tones (100–500). 
+//   Preto: dark tones (300–700). 
 export const TONES = {
   preto: {
     mic: [300, 400, 500, 700], tasks: [300, 500, 700], weather: [400, 600], usage: [300, 600, 700], usageDaily: [500, 700],
     battery: [400, 500, 700], calendar: [300, 400, 600], clockA: [300, 500, 600, 700], clockB: [400, 700],
   },
-  offwhite: {
-    mic: [100, 400, 500], tasks: [200, 400, 500], weather: [100, 300], usage: [100, 300, 500], usageDaily: [200, 500],
-    battery: [100, 200, 400], calendar: [300, 400, 500], clockA: [100, 300, 400, 500], clockB: [200, 300],
-  },
 }
 
 // One complementary accent per monochrome theme: an extra soft glow on every orb (part of the theme tokens, `--accent`).
-const ACCENTS = { preto: '#D6812E', offwhite: '#9CC2EA' }
+const ACCENTS = { preto: '#D6812E' }
 
 // Where the glow sits on each widget group's orbs (center + radius, % of the orb), varied between groups. Each disc
 // covers 19–25% of the orb's area, so the accent is never dominant.
@@ -121,6 +116,16 @@ export const ROXO = {
 }
 const ROXO_COLORS = roleColors(ROXO.base)
 
+// Off white: same logic, light tones with black foreground. The brick depth is only a soft region toward the edges of the
+// orb (`--depth-edge`, ~22% of the area, see EDGE_DEPTH_GLOWS) so black text and rings never sit on it; gold is the `--sun` glow.
+export const OFFWHITE = {
+  main: '#E9E2DA', // selector swatch
+  base: { olive: '#D2C2AF', sage: '#D0C4B7', light: '#E9E2DA', mint: '#F4B6B0' },
+  depth: '#924642',
+  sun: '#F1CA87',
+}
+const OFFWHITE_COLORS = roleColors(OFFWHITE.base)
+
 // Extra glow layers (center + radius, % of the orb), only on the orbs that have one in the reference. The disc areas
 // (clipped by the circle) are ~34–40% for navy (most orbs, soft and blurred; not on the weather orbs) and ~20–28% for yellow. Their colors are the `--depth` / `--sun` tokens,
 // transparent in every theme except the roles themes (Verde, Roxo).
@@ -138,6 +143,22 @@ export const DEPTH_GLOWS = {
   clockFull: { at: '0% 100%', size: '66%' },
   tasksFull: { at: '100% 0%', size: '64%' },
   digital: { at: '100% 100%', size: '64%' },
+}
+// Off white's depth: smaller (~22%) and pushed to the edges/corners of each orb. Colored by `--depth-edge`.
+export const EDGE_DEPTH_GLOWS = {
+  mic: { at: '50% 0%', size: '36%' },
+  tasks: { at: '100% 100%', size: '54%' },
+  usage: { at: '0% 0%', size: '54%' },
+  usageWeekly: { at: '0% 0%', size: '54%' },
+  usageDaily: { at: '100% 0%', size: '54%' },
+  calendar: { at: '100% 100%', size: '54%' },
+  calendarFull: { at: '100% 100%', size: '54%' },
+  battery: { at: '100% 0%', size: '54%' },
+  batteryFull: { at: '0% 0%', size: '54%' },
+  clock: { at: '0% 100%', size: '54%' },
+  clockFull: { at: '0% 100%', size: '54%' },
+  tasksFull: { at: '100% 0%', size: '54%' },
+  digital: { at: '100% 100%', size: '54%' },
 }
 export const SUN_GLOWS = {
   mic: { at: '100% 72%', size: '40%' },
@@ -170,7 +191,20 @@ export const THEMES = {
     orbs: COLORIDO_COLORS,
   },
   preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 100, swatch: '#272524' }),
-  offwhite: monochrome('offwhite', 'Off white', 'offwhite', { fg: '#000000', fgContrast: '#ffffff', okTone: 100 }),
+  offwhite: {
+    id: 'offwhite',
+    label: 'Off white',
+    swatch: OFFWHITE.main,
+    fg: '#000000',
+    fgContrast: '#ffffff',
+    okBg: OFFWHITE.main,
+    okFg: '#000000',
+    accent: 'transparent', // the gold is the `sun` glow
+    depthEdge: OFFWHITE.depth,
+    sun: OFFWHITE.sun,
+    grain: true,
+    orbs: OFFWHITE_COLORS,
+  },
   roxo: {
     id: 'roxo',
     label: 'Roxo',
