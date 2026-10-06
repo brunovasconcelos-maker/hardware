@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import './DragUpLayer.css'
 import { run, dur, SNAP_MS } from '../motion.js'
-import { LOCK_PX, CLOSE_DY, FLICK_V, FLICK_MIN, velocity } from '../gestures.js'
+import { lockDirection, closesOnRelease, velocity } from '../gestures.js'
 
 const EXIT_MS = 300
 
@@ -26,8 +26,8 @@ export default function DragUpLayer({ enabled = true, onClose, className = '', c
     const dx = e.clientX - d.x0
     d.dy = e.clientY - d.y0
     d.samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY })
-    if (!d.lock && Math.hypot(dx, d.dy) >= LOCK_PX) {
-      d.lock = Math.abs(dx) > Math.abs(d.dy) ? 'h' : 'v'
+    if (!d.lock) {
+      d.lock = lockDirection(dx, d.dy)
       if (d.lock === 'v') ref.current.setPointerCapture(e.pointerId)
     }
     if (d.lock === 'v') ref.current.style.transform = `translate3d(0,${Math.min(0, d.dy)}px,0)`
@@ -46,7 +46,7 @@ export default function DragUpLayer({ enabled = true, onClose, className = '', c
     const y = Math.min(0, d.dy)
     const v = velocity(d.samples, 'y')
     busy.current = true
-    if (y < -CLOSE_DY || (v < -FLICK_V && y < -FLICK_MIN)) {
+    if (closesOnRelease(y, v)) {
       const { done } = run(el, [{ transform: `translate3d(0,${y}px,0)` }, { transform: 'translate3d(0,-700px,0)' }], { duration: dur(EXIT_MS), easing: 'ease-out', fill: 'forwards' })
       await done
       onClose?.()

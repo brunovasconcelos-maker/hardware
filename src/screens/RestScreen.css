@@ -58,3 +58,8 @@
   z-index: 5;
   will-change: transform, opacity;
 }
+
+/* Completely covered by another screen: nothing here is visible, so pause every animation (they resume in place). */
+.rest-screen[data-covered] * {
+  animation-play-state: paused !important;
+}

@@ -6,7 +6,6 @@ export const dur = (ms) => (prefersReducedMotion() ? 0 : ms)
 
 export const OPEN_MS = 450
 export const SNAP_MS = 260
-export const FADE_MS = 240
 
 // Runs a Web Animation and resolves when it finishes (or is cancelled).
 export function run(el, keyframes, options) {

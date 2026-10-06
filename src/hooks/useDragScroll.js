@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { LOCK_PX, velocity } from '../gestures.js'
+import { lockDirection, velocity } from '../gestures.js'
 
 const FRICTION = 0.0035 // per ms: free velocity decays as exp(-FRICTION * t)
 const STOP_V = 0.02 // px/ms
@@ -44,7 +44,7 @@ export function useDragScroll(ref) {
       if (!drag || drag.id !== e.pointerId) return
       const dy = e.clientY - drag.y0
       drag.samples.push({ t: e.timeStamp, y: e.clientY })
-      if (!drag.locked && Math.abs(dy) >= LOCK_PX) {
+      if (!drag.locked && lockDirection(0, dy)) {
         drag.locked = true
         el.setPointerCapture(e.pointerId)
       }

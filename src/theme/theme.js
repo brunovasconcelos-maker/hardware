@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
 import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, EDGE_DEPTH_GLOWS, SUN_GLOWS } from './themes.js'
+import { readItem, writeItem } from '../storage.js'
 import { registerModeVars, initMode, MODE_VARS, FADE_MS as MODE_FADE_MS } from './mode.js'
 
 // Theme runtime. Every theme color is a CSS custom property registered as a <color>, set on <html>:
@@ -44,12 +45,8 @@ const listeners = new Set()
 
 
 function readStored() {
-  try {
-    const v = window.localStorage.getItem(KEY)
-    return v && THEMES[v] ? v : DEFAULT_THEME
-  } catch {
-    return DEFAULT_THEME
-  }
+  const v = readItem(KEY)
+  return v && THEMES[v] ? v : DEFAULT_THEME
 }
 
 function register() {
@@ -106,11 +103,7 @@ export function setTheme(id) {
   if (!THEMES[id] || id === current) return
   current = id
   applyTheme(id)
-  try {
-    window.localStorage.setItem(KEY, id)
-  } catch {
-    console.warn('[tema] Não foi possível salvar o tema no localStorage; a escolha vale só até recarregar a página.')
-  }
+  if (!writeItem(KEY, id)) console.warn('[tema] Não foi possível salvar o tema no localStorage; a escolha vale só até recarregar a página.')
   listeners.forEach((l) => l())
 }
 

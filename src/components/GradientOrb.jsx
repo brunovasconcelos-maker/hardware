@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { memo, useId } from 'react'
 import './GradientOrb.css'
 
 const stopsToCss = (stops) =>
@@ -24,17 +24,61 @@ export function buildLayer(layer, bx = 1) {
 // Softness: all layers sit in one wrapper that is blurred (BLUR_PX nominal, scaled with the orb through container
 // units, so an orb that shrinks keeps the same proportions). The wrapper is oversized by BLEED_K blur radii on every
 // side; the circle's overflow:hidden clips it, so the blur never fades or darkens the edge of the circle.
+const EMPTY = []
 const blurFor = (size) => Math.min(60, Math.max(40, size * 0.085))
 
 // Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Each layer is its own
 // element that drifts with transform-only keyframes inside the clipped circle. `duration` (s) and `phase` (0–1)
 // desynchronize orbs. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (theme accent, and Verde's depth/sun).
 const DRIFT_VARIANTS = ['a', 'b', 'c']
+
+// The blurred, drifting layers. Memoized: a parent that re-renders every second (the clock widgets) must not rebuild the
+// gradient strings of every layer. `layers` / `glows` come from the cached orbProps(), so they are referentially stable.
+const OrbLayers = memo(function OrbLayers({ layers, glows, bx }) {
+  const drawn = layers.map((layer, i) => ({ layer, i }))
+  // bottom-most glow first, so the first glow ends up on top; the last glow (the accent) is numbered right after the layers
+  for (let k = glows.length - 1; k >= 0; k--) {
+    const g = glows[k]
+    drawn.unshift({ layer: { type: 'radial', at: g.at, size: g.size, stops: g.hold ? [[g.color, '0%'], [g.color, `${g.hold}%`], ['transparent', '100%']] : [[g.color, '0%'], ['transparent', '100%']] }, i: layers.length + glows.length - 1 - k })
+  }
+  return (
+    <div className="gradient-orb__glow" style={{ inset: `${-((bx - 1) / 2) * 100}%` }}>
+      {/* first layer = top, so paint the array in reverse DOM order */}
+      {[...drawn].reverse().map(({ layer, i }) => (
+        <div
+          key={i}
+          className={`gradient-orb__layer gradient-orb__layer--${layer.type === 'linear' ? 'cover' : 'blob'}-${DRIFT_VARIANTS[i % 3]}`}
+          style={{ background: buildLayer(layer, bx), animationDirection: i % 2 ? 'reverse' : 'normal' }}
+        />
+      ))}
+    </div>
+  )
+})
+
+// Static grain: not part of the drifting/blurred layers, on top of the gradient; always mounted, its opacity follows the
+// theme's --grain token.
+const Grain = memo(function Grain({ filterId }) {
+  return (
+    <svg className="gradient-orb__noise" aria-hidden="true">
+      <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="1.5" intercept="-0.25" />
+          <feFuncG type="linear" slope="1.5" intercept="-0.25" />
+          <feFuncB type="linear" slope="1.5" intercept="-0.25" />
+        </feComponentTransfer>
+      </filter>
+      <rect width="100%" height="100%" filter={`url(#${filterId})`} />
+    </svg>
+  )
+})
+
 export default function GradientOrb({
   size = 180,
   base,
-  layers = [],
-  glows = [],
+  layers = EMPTY,
+  glows = EMPTY,
   duration = 16,
   phase = 0,
   className = '',
@@ -44,12 +88,6 @@ export default function GradientOrb({
   const filterId = `grain-${useId().replace(/:/g, '')}`
   const blur = blurFor(size)
   const bx = 1 + 2 * ((2.5 * blur) / size) // oversized box, in orbs
-  const drawn = layers.map((layer, i) => ({ layer, i }))
-  // bottom-most glow first, so the first glow ends up on top; the last glow (the accent) is numbered right after the layers
-  for (let k = glows.length - 1; k >= 0; k--) {
-    const g = glows[k]
-    drawn.unshift({ layer: { type: 'radial', at: g.at, size: g.size, stops: g.hold ? [[g.color, '0%'], [g.color, `${g.hold}%`], ['transparent', '100%']] : [[g.color, '0%'], ['transparent', '100%']] }, i: layers.length + glows.length - 1 - k })
-  }
   return (
     <div
       className={`gradient-orb ${className}`}
@@ -65,31 +103,8 @@ export default function GradientOrb({
         ...style,
       }}
     >
-      <div className="gradient-orb__glow" style={{ inset: `${-((bx - 1) / 2) * 100}%` }}>
-        {/* first layer = top, so paint the array in reverse DOM order */}
-        {[...drawn].reverse().map(({ layer, i }) => (
-          <div
-            key={i}
-            className={`gradient-orb__layer gradient-orb__layer--${layer.type === 'linear' ? 'cover' : 'blob'}-${DRIFT_VARIANTS[i % 3]}`}
-            style={{ background: buildLayer(layer, bx), animationDirection: i % 2 ? 'reverse' : 'normal' }}
-          />
-        ))}
-      </div>
-      {/* static (not part of the drifting/blurred layers), on top of the gradient; always mounted, its opacity follows the theme's --grain token */}
-      {(
-        <svg className="gradient-orb__noise" aria-hidden="true">
-          <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
-            <feColorMatrix type="saturate" values="0" />
-            <feComponentTransfer>
-              <feFuncR type="linear" slope="1.5" intercept="-0.25" />
-              <feFuncG type="linear" slope="1.5" intercept="-0.25" />
-              <feFuncB type="linear" slope="1.5" intercept="-0.25" />
-            </feComponentTransfer>
-          </filter>
-          <rect width="100%" height="100%" filter={`url(#${filterId})`} />
-        </svg>
-      )}
+      <OrbLayers layers={layers} glows={glows} bx={bx} />
+      <Grain filterId={filterId} />
       <div className="gradient-orb__content">{children}</div>
     </div>
   )

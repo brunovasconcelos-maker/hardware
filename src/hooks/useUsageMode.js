@@ -1,26 +1,16 @@
 import { useState, useCallback } from 'react'
+import { readItem, writeItem } from '../storage.js'
 
 const KEY = 'hardware.usageMode'
 
-function read() {
-  try {
-    const v = window.localStorage.getItem(KEY)
-    return v === 'diario' ? 'diario' : 'semanal'
-  } catch {
-    return 'semanal'
-  }
-}
+const read = () => (readItem(KEY) === 'diario' ? 'diario' : 'semanal')
 
 // Usage widget mode ('semanal' | 'diario'), persisted in localStorage. Defaults to 'semanal'.
 export function useUsageMode() {
   const [mode, setMode] = useState(read)
   const update = useCallback((next) => {
     setMode(next)
-    try {
-      window.localStorage.setItem(KEY, next)
-    } catch {
-      /* storage unavailable: keep the choice in memory only */
-    }
+    writeItem(KEY, next) // if storage is unavailable the choice stays in memory only
   }, [])
   return [mode, update]
 }

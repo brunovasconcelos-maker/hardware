@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import { flushSync } from 'react-dom'
 import PageDots from './PageDots.jsx'
 import { run, dur, SNAP_MS } from '../motion.js'
-import { LOCK_PX, CLOSE_DY, FLICK_V, FLICK_MIN, velocity } from '../gestures.js'
+import { FLICK_V, FLICK_MIN, lockDirection, closesOnRelease, velocity } from '../gestures.js'
 import './WidgetViewer.css'
 
 const W = 650
@@ -82,7 +82,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     d.dx = e.clientX - d.x0
     d.dy = e.clientY - d.y0
     d.samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY })
-    if (!d.lock && Math.hypot(d.dx, d.dy) >= LOCK_PX) d.lock = Math.abs(d.dx) > Math.abs(d.dy) ? 'h' : 'v'
+    if (!d.lock) d.lock = lockDirection(d.dx, d.dy)
     if (d.lock === 'h' && pageCount > 1) {
       trackRef.current.style.transform = `translate3d(${rubber(d.dx)}px,0,0)`
     } else if (d.lock === 'v' && onClose) {
@@ -107,7 +107,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     } else if (d.lock === 'v' && onClose) {
       const y = Math.min(0, d.dy)
       const v = velocity(d.samples, 'y')
-      if (y < -CLOSE_DY || (v < -FLICK_V && y < -FLICK_MIN)) {
+      if (closesOnRelease(y, v)) {
         busy.current = true
         rootRef.current.style.transform = ''
         onClose({ dy: y, index: indexRef.current })

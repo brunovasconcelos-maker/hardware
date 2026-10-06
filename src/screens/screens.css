@@ -256,13 +256,6 @@
 .home-screen__prompt {
   top: 485px;
 }
-.home-screen__mic {
-  position: absolute;
-  left: 205px;
-  top: 205px;
-  width: 240px;
-  height: 240px;
-}
 .home-screen__grid-hit {
   position: absolute;
   right: 0;

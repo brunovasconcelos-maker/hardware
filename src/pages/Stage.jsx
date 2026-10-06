@@ -36,8 +36,6 @@ export default function Stage() {
   const pendingEnter = useRef(null) // { shared } when the next commit must play the enter animation
   const enterDone = useRef(Promise.resolve())
   const stage = useRef(null)
-  targetRef.current = target
-
   const rootOf = (screen) => stage.current?.querySelector(`[data-screen-root="${ROOT_OF[screen]}"]`)
 
   useLayoutEffect(() => {
@@ -76,6 +74,7 @@ export default function Stage() {
 
   // A route change starts the sequence (a change during a sequence is picked up by its loop).
   useLayoutEffect(() => {
+    targetRef.current = target
     if (!running.current && shownRef.current !== target) go()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target])
@@ -86,7 +85,7 @@ export default function Stage() {
   return (
     <DeviceDisplay>
       <div ref={stage} className="stage">
-        <RestScreen onMicClick={() => navigate('/home')} />
+        <RestScreen covered={shown !== 'rest' && shown !== 'home'} onMicClick={() => navigate('/home')} />
         {shown !== 'rest' && (
           <DragUpLayer className="fade-in" enabled={shown === 'home' && !voiceBusy} onClose={() => navigate('/')}>
             <div data-screen-root="home" className={shown === 'home' ? 'stage__flow' : 'stage__flow stage__flow--hidden'}>

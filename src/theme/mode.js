@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { readItem, writeItem } from '../storage.js'
 
 // Light / dark mode, independent from the color theme. Mode is a set of surface tokens (CSS custom properties on <html>):
 //   --surface              the display background (and every layer that blends into it: fades, gaps between circles)
@@ -36,12 +37,8 @@ let current = DEFAULT_MODE
 const listeners = new Set()
 
 function readStored() {
-  try {
-    const v = window.localStorage.getItem(KEY)
-    return v && MODES[v] ? v : DEFAULT_MODE
-  } catch {
-    return DEFAULT_MODE
-  }
+  const v = readItem(KEY)
+  return v && MODES[v] ? v : DEFAULT_MODE
 }
 
 export function registerModeVars() {
@@ -72,11 +69,7 @@ export function setMode(id) {
   if (!MODES[id] || id === current) return
   current = id
   applyMode(id)
-  try {
-    window.localStorage.setItem(KEY, id)
-  } catch {
-    console.warn('[modo] Não foi possível salvar o modo no localStorage; a escolha vale só até recarregar a página.')
-  }
+  if (!writeItem(KEY, id)) console.warn('[modo] Não foi possível salvar o modo no localStorage; a escolha vale só até recarregar a página.')
   listeners.forEach((l) => l())
 }
 

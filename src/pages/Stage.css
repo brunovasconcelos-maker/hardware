@@ -16,3 +16,8 @@
 .stage__flow--hidden {
   visibility: hidden;
 }
+
+/* Hidden under another screen: pause its CSS animations (the gradient drift) until it is shown again. */
+.stage__flow--hidden * {
+  animation-play-state: paused !important;
+}

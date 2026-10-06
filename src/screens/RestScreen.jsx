@@ -20,8 +20,10 @@ const DISPLAY = 650
 
 // "Tela de Descanso": microphone in the center, six widgets on a shared circular orbit.
 // Clicking a widget grows it into its full-screen view (orbit paused); dragging that view up closes it.
-// `orbitPaused` freezes (and resumes) the orbit rotation without resetting its position.
-export default function RestScreen({ orbitPaused = false, onMicClick }) {
+// `orbitPaused` freezes (and resumes) the orbit rotation without resetting its position. While the screen is completely
+// covered (`covered`, or a widget fully open) every animation inside it is paused, so the blurred gradients behind an
+// opaque screen cost nothing; they resume from where they stopped.
+export default function RestScreen({ orbitPaused = false, covered = false, onMicClick }) {
   const [clockStyle, setClockStyle] = useClockStyle()
   const [usageMode, setUsageMode] = useUsageMode()
   const [open, setOpen] = useState(null) // { key, from: {dx, dy, scale}, phase: 'opening' | 'open' | 'closing' }
@@ -94,7 +96,7 @@ export default function RestScreen({ orbitPaused = false, onMicClick }) {
   ]
 
   return (
-    <div className="rest-screen" ref={rootRef}>
+    <div className="rest-screen" ref={rootRef} data-covered={covered || open?.phase === 'open' ? '' : undefined}>
       <div className="rest-screen__orbit" data-paused={orbitPaused || open !== null}>
         {widgets.map((w) => (
           <OrbitItem key={w.key} angle={w.angle}>
