@@ -322,6 +322,10 @@
   align-items: center;
   justify-content: center;
 }
+.menu-screen__slot--button {
+  border-radius: 50%;
+  cursor: pointer;
+}
 .menu-screen__slot--action {
   left: auto;
   right: 0;

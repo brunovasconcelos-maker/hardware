@@ -78,4 +78,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Histórico opens as a layer of the Stage, over the (still mounted) voice flow, so it needs the display background. */
+.history-layer {
+  border-radius: 50%;
+  background: #141515;
 }

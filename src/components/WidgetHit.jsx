@@ -3,11 +3,12 @@ import { useRef } from 'react'
 const CLICK_SLOP = 6 // px: a press that moved this far or more is a drag, not a click
 
 // Makes a compact widget clickable. Only a press that stays within CLICK_SLOP counts as a click.
-export default function WidgetHit({ label, onActivate, className = 'widget-hit', children }) {
+export default function WidgetHit({ label, onActivate, className = 'widget-hit', style, children }) {
   const start = useRef(null)
   return (
     <div
       className={className}
+      style={style}
       role="button"
       tabIndex={0}
       aria-label={label}
