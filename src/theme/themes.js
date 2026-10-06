@@ -1,9 +1,9 @@
 import { COLORIDO_COLORS } from './orbs.js'
 
 // ---------------------------------------------------------------------------------------------------------------
-// Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch).
+// Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch, except Preto, see below).
 export const PALETTES = {
-  preto: { 100: '#878685', 200: '#656363', 300: '#454342', 400: '#272524', 500: '#1D1A19', 600: '#13100E', 700: '#090705' },
+  preto: { 100: '#9897D5', 200: '#7A76BF', 300: '#605AA7', 400: '#4B438E', 500: '#3C3476', 600: '#2F2863', 700: '#261F52' },
   offwhite: { 100: '#FAF6F2', 200: '#F4EFEA', 300: '#EFE9E2', 400: '#E9E2DA', 500: '#A8A097', 600: '#6C6359', 700: '#352C21' },
   roxo: { 100: '#FAF4FE', 200: '#EEE6F2', 300: '#E2D9E7', 400: '#D6CBDC', 500: '#9D90A4', 600: '#67596F', 700: '#36273E' },
   azul: { 100: '#E8FBFD', 200: '#D7EFF1', 300: '#C6E4E6', 400: '#B5D8DB', 500: '#749FA2', 600: '#35696D', 700: '#003539' },
@@ -49,6 +49,24 @@ export const TONES = {
   },
 }
 
+// One complementary accent per monochrome theme: an extra soft glow on every orb (part of the theme tokens, `--accent`).
+const ACCENTS = { preto: '#D6812E', offwhite: '#9CC2EA', roxo: '#D5E182', azul: '#F99C7C', laranja: '#1C989E' }
+
+// Where the glow sits on each widget group's orbs (center + radius, % of the orb), varied between groups. Each disc
+// covers 19–25% of the orb's area, so the accent is never dominant.
+export const ACCENT_GLOWS = {
+  mic: { at: '28% 72%', size: '26%' },
+  tasks: { at: '72% 70%', size: '25%' },
+  weather: { at: '50% 85%', size: '28%' },
+  usage: { at: '25% 25%', size: '26%' },
+  usageDaily: { at: '78% 30%', size: '24%' },
+  battery: { at: '50% 20%', size: '26%' },
+  calendar: { at: '80% 75%', size: '27%' },
+  clockA: { at: '22% 55%', size: '25%' },
+  clockB: { at: '60% 78%', size: '25%' },
+}
+export const glowOf = (orbId) => ACCENT_GLOWS[GROUP_OF[orbId]]
+
 // ---------------------------------------------------------------------------------------------------------------
 const luminance = (hex) => {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
@@ -67,13 +85,13 @@ function mapToTones(colors, tones) {
   return out
 }
 
-function monochrome(id, label, paletteKey, { fg, fgContrast, okTone }) {
+function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, swatch }) {
   const palette = PALETTES[paletteKey]
   const orbs = {}
   for (const [orbId, colors] of Object.entries(COLORIDO_COLORS)) {
     orbs[orbId] = mapToTones(colors, TONES[paletteKey][GROUP_OF[orbId]].map((n) => palette[n]))
   }
-  return { id, label, swatch: palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], orbs }
+  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], accent: ACCENTS[paletteKey], orbs }
 }
 
 export const THEMES = {
@@ -86,9 +104,10 @@ export const THEMES = {
     fgContrast: '#000000',
     okBg: '#6af058',
     okFg: '#000000',
+    accent: 'transparent', // no accent glow: Colorido keeps its original colors
     orbs: COLORIDO_COLORS,
   },
-  preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 100 }),
+  preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 100, swatch: '#272524' }),
   offwhite: monochrome('offwhite', 'Off white', 'offwhite', { fg: '#000000', fgContrast: '#ffffff', okTone: 100 }),
   roxo: monochrome('roxo', 'Roxo', 'roxo', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),
   azul: monochrome('azul', 'Azul', 'azul', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),

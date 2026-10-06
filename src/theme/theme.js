@@ -1,18 +1,19 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
-import { THEMES, DEFAULT_THEME } from './themes.js'
+import { THEMES, DEFAULT_THEME, glowOf } from './themes.js'
 
 // Theme runtime. Every theme color is a CSS custom property registered as a <color>, set on <html>:
 //   --o-<orb>-<slot>   gradient colors of each orb (the orb compositions live in orbs.js)
 //   --fg / --fg-contrast   foreground on gradients (text, icons, rings, hands, page dots) and its inverse
 //   --ok-bg / --ok-fg      Result OK button and its check icon
+//   --accent               complementary glow added to every orb (transparent in Colorido)
 // Components only reference these variables (never literal colors), so switching themes restyles every screen, and
 // the registered properties let the browser crossfade between themes without touching the animated gradient layers.
 const KEY = 'hardware.theme'
 const FADE_MS = 400
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
-const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg']
+const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent']
 const ALL_VARS = [...TOKEN_VARS, ...Object.entries(COLORIDO_COLORS).flatMap(([id, colors]) => colors.map((_, i) => orbVar(id, i)))]
 
 // Props for <GradientOrb>: base color + layers, with every color as a theme variable.
@@ -23,6 +24,7 @@ export function orbProps(id) {
   cache[id] = {
     base: color(0),
     layers: ORBS[id].layers.map((l) => ({ ...l, stops: l.stops.map(([c, pos]) => [color(c), pos]) })),
+    accent: { ...glowOf(id), color: 'var(--accent)' },
   }
   return cache[id]
 }
@@ -61,6 +63,7 @@ export function applyTheme(id) {
   root.style.setProperty('--fg-contrast', t.fgContrast)
   root.style.setProperty('--ok-bg', t.okBg)
   root.style.setProperty('--ok-fg', t.okFg)
+  root.style.setProperty('--accent', t.accent)
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))
   root.dataset.theme = id
 }
