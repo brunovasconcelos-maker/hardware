@@ -29,7 +29,7 @@ export function orbProps(id) {
     layers: ORBS[id].layers.map((l) => ({ ...l, stops: l.stops.map(([c, pos]) => [color(c), pos]) })),
     // top first: depth, sun, accent (the accent keeps its position in the layer order)
     glows: [
-      DEPTH_GLOWS[id] && { ...DEPTH_GLOWS[id], hold: 30, color: 'var(--depth)' },
+      DEPTH_GLOWS[id] && { ...DEPTH_GLOWS[id], hold: 40, color: 'var(--depth)' },
       SUN_GLOWS[id] && { ...SUN_GLOWS[id], hold: 30, color: 'var(--sun)' },
       { ...glowOf(id), color: 'var(--accent)' },
     ].filter(Boolean),

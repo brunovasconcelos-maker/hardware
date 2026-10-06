@@ -101,7 +101,7 @@ function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, swatch }) {
 // Foreground on the gradients is white, like the other themes.
 export const VERDE = {
   main: '#C2D09F', // selector swatch
-  base: { olive: '#758256', sage: '#C2D09F', light: '#E3E9CD', mint: '#C9EBDA' },
+  base: { olive: '#758256', sage: '#9DAC79', light: '#C2D09F', mint: '#A2DCBF' },
   depth: '#090F45',
   sun: '#F6EE45',
 }
@@ -126,15 +126,22 @@ const VERDE_COLORS = {
 }
 
 // Extra glow layers (center + radius, % of the orb), only on the orbs that have one in the reference. The disc areas
-// (clipped by the circle) are ~18–25% for navy and ~20–28% for yellow. Their colors are the `--depth` / `--sun` tokens,
+// (clipped by the circle) are ~34–40% for navy (most orbs, soft and blurred; not on the weather orbs) and ~20–28% for yellow. Their colors are the `--depth` / `--sun` tokens,
 // transparent in every theme except Verde.
 export const DEPTH_GLOWS = {
-  mic: { at: '50% 0%', size: '36%' },
-  usage: { at: '0% 0%', size: '54%' },
-  usageWeekly: { at: '0% 0%', size: '55%' },
-  calendar: { at: '100% 100%', size: '52%' },
-  calendarFull: { at: '100% 100%', size: '54%' },
-  clock: { at: '12% 92%', size: '38%' },
+  mic: { at: '50% 0%', size: '49%' },
+  tasks: { at: '0% 0%', size: '64%' },
+  usage: { at: '0% 0%', size: '67%' },
+  usageWeekly: { at: '0% 0%', size: '69%' },
+  usageDaily: { at: '0% 45%', size: '48%' },
+  calendar: { at: '100% 100%', size: '67%' },
+  calendarFull: { at: '100% 100%', size: '69%' },
+  battery: { at: '100% 0%', size: '64%' },
+  batteryFull: { at: '0% 0%', size: '66%' },
+  clock: { at: '12% 92%', size: '53%' },
+  clockFull: { at: '0% 100%', size: '66%' },
+  tasksFull: { at: '100% 0%', size: '64%' },
+  digital: { at: '100% 100%', size: '64%' },
 }
 export const SUN_GLOWS = {
   mic: { at: '100% 72%', size: '40%' },
@@ -176,7 +183,7 @@ export const THEMES = {
     swatch: VERDE.main,
     fg: '#ffffff',
     fgContrast: VERDE.depth, // text on the white "today" circle
-    okBg: L,
+    okBg: '#E3E9CD',
     okFg: VERDE.depth,
     accent: 'transparent', // the yellow is the `sun` glow
     depth: VERDE.depth,
