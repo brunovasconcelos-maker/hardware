@@ -82,21 +82,42 @@ export const PRETO = {
 }
 const PRETO_COLORS = roleColors(PRETO.base)
 
-// Laranja: same logic. White text must stay readable, so the base layers use only the red and the orange; the light pink is a
-// small soft glow pushed to the rim of some orbs (`--pink`, PINK_GLOWS), away from the text, rings and dots. The dark purple
-// depth stays inside the orb (`--depth-inner`, like Preto). Two accents, one per orb: lime (`--sun`) or gold (`--sun-alt`, the
-// orbs in GOLD_ORBS), as strong soft glows at the SUN_GLOWS positions.
+// Laranja: same roles as the other themes, but each orb has its own explicit composition (slot colors below) so the palette is
+// spread out: light pink dominates the mic, weather and battery; red dominates tasks and calendar (and a band in usage); the
+// clocks are mostly dark purple; the rest is orange. White text stays readable: wherever pink is a large light area, the
+// text/icons/rings sit over a darker area (orange or the purple inner depth, `--depth-inner`, like Preto). The pink also has
+// a small rim glow (`--pink`, PINK_GLOWS). Two accents, one per orb: lime (`--sun`) or gold (`--sun-alt`, the orbs in
+// GOLD_ORBS), as strong soft glows at the SUN_GLOWS positions.
 export const LARANJA = {
   main: '#EB684A', // selector swatch
-  base: { olive: '#E30800', sage: '#EB684A', light: '#EB684A', mint: '#E30800' },
+  red: '#E30800',
+  orange: '#EB684A',
   pink: '#FBD1C6',
   depth: '#2E0A3A',
   lime: '#C2EB5E',
   gold: '#D7A94E',
 }
-const LARANJA_COLORS = roleColors(LARANJA.base)
+const { red: R, orange: O, pink: P, depth: U } = LARANJA
+// Color per slot of each orb (slot 0 = base; positions are the compositions in orbs.js).
+const LARANJA_COLORS = {
+  mic: [P, O, P, P, O, P, P, O], // pink (the lime glow sits on it) + orange · purple behind the icon
+  tasks: [R, O, R, O, R, R, O, O], // red + orange · gold glow · purple
+  weather: [P, O, P, O, P, O], // pink sides, orange behind the cloud and under the text · gold glow · purple center
+  usage: [O, O, O, O, O, O, R, R, O, O], // orange with a red band · gold glow · purple
+  calendar: [R, O, R, O], // red + orange · gold glow · purple
+  battery: [P, P, P, P, P, P, P, P], // all pink (the lime glow sits on it) · purple behind the icons
+  clock: [U, U, O, U, O, O, U, U, O], // dark purple with orange · gold glow
+  tasksFull: [R, O, R, R, O, O, O],
+  weatherFull: [P, O, P, O, P, O, O],
+  usageWeekly: [O, O, O, O, O, R, R, O, O],
+  usageDaily: [O, O, O, O, O, O, O, R, O],
+  batteryFull: [P, O, O, O, O, O, O, O], // orange (the ring), with a soft pink sheen along the diagonal
+  calendarFull: [R, O, R, O, R],
+  clockFull: [U, U, O, U, O, O, U, U, O],
+  digital: [O, O, P, O, O, U, U, O, O], // orange, a purple band behind the time, a little pink low-left
+}
 // Orbs whose accent is gold; every other orb with an accent glow gets lime.
-export const GOLD_ORBS = new Set(['tasks', 'tasksFull', 'usage', 'usageWeekly', 'calendar', 'battery', 'batteryFull', 'clock'])
+export const GOLD_ORBS = new Set(['tasks', 'tasksFull', 'weather', 'weatherFull', 'usage', 'usageWeekly', 'usageDaily', 'calendar', 'calendarFull', 'clock'])
 
 // Off white: same logic, light tones with black foreground. The brick depth is only a soft region toward the edges of the
 // orb (`--depth-edge`, ~22% of the area, see EDGE_DEPTH_GLOWS) so black text and rings never sit on it; gold is the `--sun` glow.
