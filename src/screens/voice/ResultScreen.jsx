@@ -6,10 +6,12 @@ import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
 import './voice.css'
 
 // Result (Figma 158:2173). Only the text area scrolls; icons, the bottom fade and the OK button stay fixed.
-// `onGridClick` / `onOkClick` are optional; the history (list) icon has no action yet.
-export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, onOkClick }) {
+// `onGridClick` (menu), `onListClick` (Histórico) and `onOkClick` are optional.
+export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, onListClick, onOkClick }) {
   const scroll = useRef(null)
   useDragScroll(scroll)
+  const List_ = onListClick ? WidgetHit : 'div'
+  const listProps = onListClick ? { label: 'Abrir histórico', onActivate: onListClick } : {}
   const Grid = onGridClick ? WidgetHit : 'div'
   const gridProps = onGridClick ? { label: 'Abrir menu', onActivate: onGridClick } : {}
   const Ok = onOkClick ? WidgetHit : 'div'
@@ -28,9 +30,9 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, o
         </div>
       </div>
       <div className="result-screen__fade" />
-      <div className="result-screen__icon result-screen__icon--left">
+      <List_ className="result-screen__icon result-screen__icon--left" {...listProps}>
         <List size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
-      </div>
+      </List_>
       <Grid className="result-screen__icon result-screen__icon--right" {...gridProps}>
         <CirclesFour size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
       </Grid>

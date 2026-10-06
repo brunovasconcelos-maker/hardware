@@ -17,7 +17,7 @@ import './voiceFlow.css'
 
 // Timings (ms)
 const START_MS = 400 // Homepage -> recording look
-const DOTS_HOLD_MS = 1000 // dots stay still before the fake voice starts
+const DOTS_HOLD_MS = 500 // dots stay still before the fake voice starts
 const SEND_MS = 550 // lines shrink + orb disappears + thinking shapes appear
 const THINK_MS = 3500 // thinking loop
 const THINK_CYCLE_MS = 900 // one full cycle through the 3 Figma frames
@@ -51,7 +51,7 @@ function thinkingHeights(ms) {
 // Visual design comes from the Homepage / recording / thinking / result screens; this component only animates them.
 // `fixedResult` (optional) forces one answer; by default each sent recording shows a random mock response (never the
 // same one twice in a row).
-export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridClick, onBusyChange }) {
+export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridClick, onListClick, onBusyChange }) {
   const [phase, setPhase] = useState('home')
   const [result, setResult] = useState(fixedResult ?? null) // the answer shown / read / saved for the current session
   const prevPhase = useRef(null)
@@ -249,7 +249,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
 
       {showResult && result && (
         <div ref={resultWrap} className="voice-flow__result">
-          <ResultScreen result={result} onGridClick={() => onGridClick?.()} onOkClick={onOk} />
+          <ResultScreen result={result} onGridClick={() => onGridClick?.()} onListClick={() => onListClick?.()} onOkClick={onOk} />
         </div>
       )}
     </div>

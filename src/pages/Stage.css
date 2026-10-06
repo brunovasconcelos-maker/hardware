@@ -1,0 +1,18 @@
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* No clicks while a transition is running. */
+.stage[data-busy] {
+  pointer-events: none;
+}
+
+/* The Homepage / voice flow content: stays mounted (to keep its state) but hidden under the other screens. */
+.stage__flow {
+  position: absolute;
+  inset: 0;
+}
+.stage__flow--hidden {
+  visibility: hidden;
+}

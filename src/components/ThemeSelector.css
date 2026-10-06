@@ -1,4 +1,4 @@
-/* Figma 204:2997: white capsule, 1px border rgba(0,0,0,.25), 16px padding, 24px gap, 56px swatches. */
+/* Figma 204:2997: white capsule, 1px border rgba(0,0,0,.25), 16px padding, 24px gap, 40px swatches. */
 .theme-selector {
   box-sizing: border-box;
   display: flex;
@@ -14,17 +14,17 @@
 .theme-selector__swatch {
   flex: none;
   box-sizing: border-box;
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   cursor: pointer;
 }
 
-/* Selected: a 2px neutral ring, separated from the swatch by a 2px white gap. */
+/* Selected: a 1.5px neutral ring, separated from the swatch by a 1.5px white gap (scaled with the 40px swatches). */
 .theme-selector__swatch--selected {
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #1a1a1a;
+  box-shadow: 0 0 0 1.5px #ffffff, 0 0 0 3px #1a1a1a;
 }
 
 .theme-selector__swatch:focus-visible {

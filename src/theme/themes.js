@@ -65,13 +65,13 @@ function mapToTones(colors, tones) {
   return out
 }
 
-function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, swatch }) {
+function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, okFg, swatch }) {
   const palette = PALETTES[paletteKey]
   const orbs = {}
   for (const [orbId, colors] of Object.entries(COLORIDO_COLORS)) {
     orbs[orbId] = mapToTones(colors, TONES[paletteKey][GROUP_OF[orbId]].map((n) => palette[n]))
   }
-  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], accent: ACCENTS[paletteKey], grain: false, orbs }
+  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: okFg ?? palette[700], accent: ACCENTS[paletteKey], grain: false, orbs }
 }
 
 // Verde uses roles instead of the 100–700 scale (reference: Figma 204:2847). The orbs mix green, yellow and blue:
@@ -190,14 +190,15 @@ export const THEMES = {
     accent: 'transparent', // no accent glow: Colorido keeps its original colors
     orbs: COLORIDO_COLORS,
   },
-  preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 100, swatch: '#272524' }),
+  preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 400, okFg: '#ffffff', swatch: '#272524' }),
+  // (Preto's OK button uses the palette main tone #4B438E: the swatch #272524 is too close to the display background.)
   offwhite: {
     id: 'offwhite',
     label: 'Off white',
     swatch: OFFWHITE.main,
     fg: '#000000',
     fgContrast: '#ffffff',
-    okBg: OFFWHITE.main,
+    okBg: OFFWHITE.main, // OK button: the theme's main color, dark check
     okFg: '#000000',
     accent: 'transparent', // the gold is the `sun` glow
     depthEdge: OFFWHITE.depth,
@@ -211,8 +212,8 @@ export const THEMES = {
     swatch: ROXO.main,
     fg: '#ffffff',
     fgContrast: ROXO.depth, // text on the white "today" circle
-    okBg: ROXO.base.mint,
-    okFg: ROXO.depth,
+    okBg: ROXO.main, // OK button: the theme's main color, dark check
+    okFg: '#000000',
     accent: 'transparent', // the coral is the `sun` glow
     depth: ROXO.depth,
     sun: ROXO.sun,
@@ -225,8 +226,8 @@ export const THEMES = {
     swatch: VERDE.main,
     fg: '#ffffff',
     fgContrast: VERDE.depth, // text on the white "today" circle
-    okBg: '#E3E9CD',
-    okFg: VERDE.depth,
+    okBg: VERDE.main, // OK button: the theme's main color, dark check
+    okFg: '#000000',
     accent: 'transparent', // the yellow is the `sun` glow
     depth: VERDE.depth,
     sun: VERDE.sun,

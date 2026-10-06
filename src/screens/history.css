@@ -84,6 +84,8 @@
 
 /* Histórico opens as a layer of the Stage, over the (still mounted) voice flow, so it needs the display background. */
 .history-layer {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background: var(--surface);
 }

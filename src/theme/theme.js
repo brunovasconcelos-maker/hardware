@@ -1,19 +1,19 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
 import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, EDGE_DEPTH_GLOWS, SUN_GLOWS } from './themes.js'
-import { registerModeVars, initMode, MODE_VARS } from './mode.js'
+import { registerModeVars, initMode, MODE_VARS, FADE_MS as MODE_FADE_MS } from './mode.js'
 
 // Theme runtime. Every theme color is a CSS custom property registered as a <color>, set on <html>:
 //   --o-<orb>-<slot>   gradient colors of each orb (the orb compositions live in orbs.js)
 //   --fg / --fg-contrast   foreground on gradients (text, icons, rings, hands, page dots) and its inverse
 //   --ok-bg / --ok-fg      Result OK button and its check icon
-//   --grain                1 when the theme uses the grain overlay, else 0 (see useGrain)
+//   --grain                1 when the theme uses the grain overlay, else 0 (the overlay is always mounted; its opacity follows this)
 //   --accent               complementary glow added to every orb (transparent in Colorido)
 //   --depth / --depth-edge / --sun   extra dark shadow (big / edge-only) and light glow layers on the orbs that define one (transparent unless a theme sets them: Verde)
 // Components only reference these variables (never literal colors), so switching themes restyles every screen, and
 // the registered properties let the browser crossfade between themes without touching the animated gradient layers.
 const KEY = 'hardware.theme'
-const FADE_MS = 400
+const FADE_MS = 600 // theme colors and grain morph (mode tokens keep their own 400ms, see mode.js)
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
 const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent', '--depth', '--depth-edge', '--sun']
@@ -42,30 +42,6 @@ export function orbProps(id) {
 let current = DEFAULT_THEME
 const listeners = new Set()
 
-// The grain overlay is only mounted while a theme uses it (feTurbulence is not free): it appears right away and, when
-// the theme changes to one without grain, stays until its 400ms fade-out (--grain, crossfaded) is done.
-let grainMounted = false
-let grainTimer = 0
-const grainListeners = new Set()
-function setGrain(on) {
-  clearTimeout(grainTimer)
-  const set = (v) => {
-    if (grainMounted === v) return
-    grainMounted = v
-    grainListeners.forEach((l) => l())
-  }
-  if (on) set(true)
-  else grainTimer = setTimeout(() => set(false), FADE_MS + 50)
-}
-export function useGrain() {
-  return useSyncExternalStore(
-    (l) => {
-      grainListeners.add(l)
-      return () => grainListeners.delete(l)
-    },
-    () => grainMounted,
-  )
-}
 
 function readStored() {
   try {
@@ -108,7 +84,6 @@ export function applyTheme(id) {
   root.style.setProperty('--depth-edge', t.depthEdge ?? 'transparent')
   root.style.setProperty('--sun', t.sun ?? 'transparent')
   root.style.setProperty(GRAIN_VAR, t.grain ? '1' : '0')
-  setGrain(!!t.grain)
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))
   root.dataset.theme = id
 }
@@ -122,7 +97,7 @@ export function initTheme() {
   if (registered) {
     // Enable the crossfade only after the first paint, so the initial theme is not animated.
     setTimeout(() => {
-      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR, ...MODE_VARS].map((n) => `${n} ${FADE_MS}ms ease-in-out`).join(',')
+      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR].map((n) => `${n} ${FADE_MS}ms ease-in-out`).concat(MODE_VARS.map((n) => `${n} ${MODE_FADE_MS}ms ease-in-out`)).join(',')
     }, 0)
   }
 }

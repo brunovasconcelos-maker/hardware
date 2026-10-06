@@ -24,7 +24,7 @@ export default function ModeSelector() {
           className={mode === id ? 'mode-selector__option mode-selector__option--selected' : 'mode-selector__option'}
           onClick={() => setMode(id)}
         >
-          <Icon size={32} weight="regular" color="currentColor" />
+          <Icon size={23} weight="regular" color="currentColor" />
         </button>
       ))}
     </div>

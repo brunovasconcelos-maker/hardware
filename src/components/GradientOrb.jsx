@@ -1,5 +1,4 @@
 import { useId } from 'react'
-import { useGrain } from '../theme/theme.js'
 import './GradientOrb.css'
 
 const stopsToCss = (stops) =>
@@ -43,7 +42,6 @@ export default function GradientOrb({
   children,
 }) {
   const filterId = `grain-${useId().replace(/:/g, '')}`
-  const grain = useGrain() // theme token: only themes with grain: true show it
   const blur = blurFor(size)
   const bx = 1 + 2 * ((2.5 * blur) / size) // oversized box, in orbs
   const drawn = layers.map((layer, i) => ({ layer, i }))
@@ -77,8 +75,8 @@ export default function GradientOrb({
           />
         ))}
       </div>
-      {grain && (
-        // static (not part of the drifting/blurred layers), on top of the gradient
+      {/* static (not part of the drifting/blurred layers), on top of the gradient; always mounted, its opacity follows the theme's --grain token */}
+      {(
         <svg className="gradient-orb__noise" aria-hidden="true">
           <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />

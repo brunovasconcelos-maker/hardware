@@ -16,7 +16,7 @@ export default function HistoryScreen({ items, onClose }) {
   useDragScroll(scroll) // click-and-drag scrolling with momentum (same as the Result screen); the wheel is native
   return (
     <div className="voice-screen history-screen">
-      <div ref={scroll} className="history-screen__scroll">
+      <div ref={scroll} data-tx="static" className="history-screen__scroll">
         <ul className="history-screen__list">
           {list.map((item) => (
             <li key={item.id} className="history-screen__item">
@@ -28,8 +28,8 @@ export default function HistoryScreen({ items, onClose }) {
           ))}
         </ul>
       </div>
-      <p className="history-screen__title">Histórico</p>
-      <WidgetHit label="Fechar histórico" className="history-screen__close" onActivate={() => onClose?.()}>
+      <p data-tx="static" className="history-screen__title">Histórico</p>
+      <WidgetHit data-tx="item" label="Fechar histórico" className="history-screen__close" onActivate={() => onClose?.()}>
         <X size={56} weight="regular" color="currentColor" />
       </WidgetHit>
     </div>
