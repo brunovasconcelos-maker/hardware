@@ -160,7 +160,7 @@ export const THEMES = {
   colorido: {
     id: 'colorido',
     label: 'Colorido',
-    swatch: 'conic-gradient(from 200deg, #ff5a5f, #ffb347, #f2e66b, #6af058, #3fb7ff, #8a5cff, #ff5ac8, #ff5a5f)',
+    swatch: 'conic-gradient(from 0deg, #ff00ff, #0000ff 25%, #00ffff 40%, #00ff00 57%, #ffff00 75%, #ff0000 90%, #ff00ff)', // hue wheel, Figma 204:2997
     fg: '#ffffff',
     fgContrast: '#000000',
     okBg: '#6af058',
@@ -202,5 +202,5 @@ export const THEMES = {
 }
 
 // Order shown in the selector.
-export const THEME_ORDER = ['preto', 'offwhite', 'roxo', 'verde', 'colorido']
+export const THEME_ORDER = ['preto', 'offwhite', 'verde', 'roxo', 'colorido']
 export const DEFAULT_THEME = 'colorido'
