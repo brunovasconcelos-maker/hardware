@@ -1,4 +1,3 @@
-import { useId } from 'react'
 import './GradientOrb.css'
 
 const stopsToCss = (stops) =>
@@ -15,9 +14,9 @@ export function buildLayer(layer) {
   return `radial-gradient(ellipse ${size}at ${layer.at ?? '50% 50%'}, ${stopsToCss(layer.stops)})`
 }
 
-// Circular gradient surface: a base color, stacked CSS gradient layers (first = top) and a static
-// SVG feTurbulence grain overlay. Each layer is its own element that drifts with transform-only
-// keyframes inside the clipped circle. `duration` (s) and `phase` (0–1) desynchronize orbs.
+// Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Each layer is its own
+// element that drifts with transform-only keyframes inside the clipped circle. `duration` (s) and `phase` (0–1)
+// desynchronize orbs.
 const DRIFT_VARIANTS = ['a', 'b', 'c']
 export default function GradientOrb({
   size = 180,
@@ -25,12 +24,10 @@ export default function GradientOrb({
   layers = [],
   duration = 16,
   phase = 0,
-  noise = { opacity: 0.55, frequency: 0.9, blend: 'overlay' },
   className = '',
   style,
   children,
 }) {
-  const filterId = `grain-${useId().replace(/:/g, '')}`
   return (
     <div
       className={`gradient-orb ${className}`}
@@ -51,18 +48,6 @@ export default function GradientOrb({
           style={{ background: buildLayer(layer), animationDirection: i % 2 ? 'reverse' : 'normal' }}
         />
       ))}
-      <svg className="gradient-orb__noise" aria-hidden="true" style={{ opacity: noise.opacity, mixBlendMode: noise.blend }}>
-        <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency={noise.frequency} numOctaves="3" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-          <feComponentTransfer>
-            <feFuncR type="linear" slope="1.5" intercept="-0.25" />
-            <feFuncG type="linear" slope="1.5" intercept="-0.25" />
-            <feFuncB type="linear" slope="1.5" intercept="-0.25" />
-          </feComponentTransfer>
-        </filter>
-        <rect width="100%" height="100%" filter={`url(#${filterId})`} />
-      </svg>
       <div className="gradient-orb__content">{children}</div>
     </div>
   )
