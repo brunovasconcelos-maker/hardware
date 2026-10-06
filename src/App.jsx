@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Stage from './pages/Stage.jsx'
-import ThemeSelector from './components/ThemeSelector.jsx'
+import SideControls from './components/SideControls.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
 import { VoiceIdlePreview, VoiceRecordingPreview, VoiceThinkingPreview, VoiceResultPreview } from './pages/VoicePreview.jsx'
 import WidgetViewer from './components/WidgetViewer.jsx'
@@ -23,7 +23,7 @@ const PREVIEW_ROUTES = [
 export default function App() {
   return (
     <>
-      <ThemeSelector />
+      <SideControls />
       <Routes>
         <Route path="/" element={<Stage />} />
         <Route path="/home" element={<Stage />} />

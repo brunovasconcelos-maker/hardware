@@ -37,7 +37,7 @@
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  color: #ffffff;
+  color: var(--on-surface);
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   line-height: 1.2;
@@ -74,7 +74,7 @@
   right: 0;
   top: -1px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--on-surface-muted);
 }
 .result-screen__fade {
   position: absolute;
@@ -83,7 +83,7 @@
   width: 677px;
   height: 221px;
   transform: translateX(-50%);
-  background: linear-gradient(to bottom, rgba(20, 21, 21, 0), #141515);
+  background: linear-gradient(to bottom, transparent, var(--surface));
   pointer-events: none;
 }
 .result-screen__icon {

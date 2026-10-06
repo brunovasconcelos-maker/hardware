@@ -7,7 +7,7 @@
   height: 650px;
   flex: none;
   border-radius: 50%;
-  background: #141515;
+  background: var(--surface);
   overflow: hidden;
 }
 

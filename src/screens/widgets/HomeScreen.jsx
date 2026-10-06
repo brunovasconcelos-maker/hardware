@@ -13,7 +13,7 @@ export default function HomeScreen({ name = 'Bruno', onGridClick }) {
       </div>
       <p className="home-screen__prompt">Como posso ajudar?</p>
       <WidgetHit label="Abrir menu" className="home-screen__grid-hit" onActivate={() => onGridClick?.()}>
-        <CirclesFour className="home-screen__grid" size={56} weight="regular" color="rgba(255,255,255,0.5)" />
+        <CirclesFour className="home-screen__grid" size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
       </WidgetHit>
     </div>
   )

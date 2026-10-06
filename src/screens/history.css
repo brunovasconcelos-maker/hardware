@@ -1,6 +1,6 @@
 /* Histórico (Figma coordinates on a 650x650 canvas). Colors on the dark display come from --on-display. */
 :root {
-  --on-display: #ffffff;
+  --on-display: var(--on-surface);
 }
 
 .history-screen {
@@ -85,5 +85,5 @@
 /* Histórico opens as a layer of the Stage, over the (still mounted) voice flow, so it needs the display background. */
 .history-layer {
   border-radius: 50%;
-  background: #141515;
+  background: var(--surface);
 }

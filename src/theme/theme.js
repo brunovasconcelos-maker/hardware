@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
 import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, SUN_GLOWS } from './themes.js'
+import { registerModeVars, initMode, MODE_VARS } from './mode.js'
 
 // Theme runtime. Every theme color is a CSS custom property registered as a <color>, set on <html>:
 //   --o-<orb>-<slot>   gradient colors of each orb (the orb compositions live in orbs.js)
@@ -112,13 +113,14 @@ export function applyTheme(id) {
 
 // Call once before the first render: registers the properties and applies the stored theme (no flash, no fade).
 export function initTheme() {
-  const registered = register()
+  const registered = register() && registerModeVars()
+  initMode()
   current = readStored()
   applyTheme(current)
   if (registered) {
     // Enable the crossfade only after the first paint, so the initial theme is not animated.
     setTimeout(() => {
-      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR].map((n) => `${n} ${FADE_MS}ms ease-in-out`).join(',')
+      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR, ...MODE_VARS].map((n) => `${n} ${FADE_MS}ms ease-in-out`).join(',')
     }, 0)
   }
 }

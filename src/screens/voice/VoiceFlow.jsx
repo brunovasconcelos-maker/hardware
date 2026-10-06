@@ -228,7 +228,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
         <p className="home-screen__greeting">Olá, {name}</p>
         <p className="home-screen__prompt">Como posso ajudar?</p>
         <WidgetHit label="Abrir menu" className="home-screen__grid-hit" onActivate={() => onGridClick?.()}>
-          <CirclesFour className="home-screen__grid" size={56} weight="regular" color="rgba(255,255,255,0.5)" />
+          <CirclesFour className="home-screen__grid" size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
         </WidgetHit>
       </div>
 

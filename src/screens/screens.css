@@ -18,10 +18,10 @@
   font-weight: 400;
 }
 
-/* Homepage texts sit on the dark display, not on a gradient: they keep their color in every theme. */
+/* Homepage texts sit on the dark display, not on a gradient: they follow the light/dark mode, not the color theme. */
 .home-screen__greeting,
 .home-screen__prompt {
-  color: #ffffff;
+  color: var(--on-surface);
 }
 
 /* Bateria / Usage: [icon] big value + label, centered vertically */
@@ -282,7 +282,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #141515;
+  background: var(--surface);
   overflow: hidden;
   animation: menu-in 300ms ease-out;
 }
@@ -297,7 +297,7 @@
   width: 360px;
   height: 360px;
   border-radius: 50%;
-  background: #252525;
+  background: var(--surface-raised);
 }
 .menu-screen__title {
   position: absolute;
@@ -305,7 +305,7 @@
   left: calc(50% + 0.5px);
   top: calc(50% - 19px);
   transform: translateX(-50%);
-  color: #ffffff;
+  color: var(--on-surface);
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   font-size: 32px;
@@ -313,6 +313,7 @@
   white-space: nowrap;
 }
 .menu-screen__slot {
+  color: var(--on-surface);
   position: absolute;
   box-sizing: border-box;
   width: 145px;

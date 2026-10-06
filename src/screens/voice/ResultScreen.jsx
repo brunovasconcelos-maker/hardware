@@ -29,10 +29,10 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, o
       </div>
       <div className="result-screen__fade" />
       <div className="result-screen__icon result-screen__icon--left">
-        <List size={56} weight="regular" color="rgba(255,255,255,0.5)" />
+        <List size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
       </div>
       <Grid className="result-screen__icon result-screen__icon--right" {...gridProps}>
-        <CirclesFour size={56} weight="regular" color="rgba(255,255,255,0.5)" />
+        <CirclesFour size={56} weight="regular" color="currentColor" style={{ color: 'var(--on-surface-muted)' }} />
       </Grid>
       <Ok className="result-screen__ok" {...okProps}>
         <Check size={40} weight="regular" color="currentColor" />

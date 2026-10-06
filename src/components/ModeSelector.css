@@ -1,0 +1,38 @@
+/* Figma 221:3004: same capsule as the theme selector (white, 1px border, 16px padding, 24px gap, 56px options). */
+.mode-selector {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 360px;
+}
+
+.mode-selector__option {
+  flex: none;
+  box-sizing: border-box;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #919191;
+  cursor: pointer;
+}
+
+.mode-selector__option--selected {
+  background: #272524;
+  color: #ffffff;
+}
+
+.mode-selector__option:focus-visible {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 3px;
+}

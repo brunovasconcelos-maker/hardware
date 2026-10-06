@@ -43,10 +43,10 @@ export default function MenuScreen({ onClose, onHistory }) {
   return (
     <div ref={ref} className="menu-screen">
       <svg className="menu-screen__sector" width="650" height="650" viewBox="0 0 650 650" aria-hidden="true">
-        <path d={SECTOR} fill="#252525" />
+        <path d={SECTOR} style={{ fill: 'var(--surface-raised)' }} />
         <path
           d={`M${325 + 180 * Math.cos(A)} ${325 - 180 * Math.sin(A)} L${325 + R * Math.cos(A)} ${325 - R * Math.sin(A)} M${325 + 180 * Math.cos(A)} ${325 + 180 * Math.sin(A)} L${325 + R * Math.cos(A)} ${325 + R * Math.sin(A)}`}
-          stroke="#0a0a0a"
+          style={{ stroke: 'var(--surface-sunken)' }}
           strokeWidth="1.5"
           fill="none"
         />
@@ -59,12 +59,12 @@ export default function MenuScreen({ onClose, onHistory }) {
         const props = action ? { label, onActivate: action, className: 'menu-screen__slot menu-screen__slot--button' } : { className: 'menu-screen__slot', 'aria-label': label }
         return (
           <Slot key={key} style={{ left, top }} {...props}>
-            <Icon size={56} weight="regular" color="#ffffff" />
+            <Icon size={56} weight="regular" color="currentColor" />
           </Slot>
         )
       })}
       <WidgetHit label="Fechar menu" className="menu-screen__slot menu-screen__slot--action" onActivate={close}>
-        <X size={56} weight="regular" color="#ffffff" />
+        <X size={56} weight="regular" color="currentColor" />
       </WidgetHit>
     </div>
   )
