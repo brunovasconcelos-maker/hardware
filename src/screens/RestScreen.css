@@ -60,6 +60,9 @@
 }
 
 /* Completely covered by another screen: nothing here is visible, so pause every animation (they resume in place). */
-.rest-screen[data-covered] * {
-  animation-play-state: paused !important;
+.rest-screen[data-covered] .rest-screen__orbit,
+.rest-screen[data-covered] .rest-screen__orbit *,
+.rest-screen[data-covered] .rest-screen__mic,
+.rest-screen[data-covered] .rest-screen__mic * {
+  animation-play-state: paused !important; /* not the open widget overlay, which is what covers it */
 }

@@ -75,6 +75,7 @@ const Grain = memo(function Grain({ filterId }) {
 })
 
 export default function GradientOrb({
+  orb,
   size = 180,
   base,
   layers = EMPTY,
@@ -90,6 +91,7 @@ export default function GradientOrb({
   const bx = 1 + 2 * ((2.5 * blur) / size) // oversized box, in orbs
   return (
     <div
+      data-orb={orb}
       className={`gradient-orb ${className}`}
       style={{
         width: size,

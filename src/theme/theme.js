@@ -19,7 +19,8 @@ const FADE_MS = 600 // theme colors and grain morph (mode tokens keep their own 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
 const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent', '--depth', '--depth-edge', '--sun']
 const GRAIN_VAR = '--grain'
-const ALL_VARS = [...TOKEN_VARS, ...Object.entries(COLORIDO_COLORS).flatMap(([id, colors]) => colors.map((_, i) => orbVar(id, i)))]
+const ORB_VARS = Object.fromEntries(Object.entries(COLORIDO_COLORS).map(([id, colors]) => [id, colors.map((_, i) => orbVar(id, i))]))
+const ALL_VARS = [...TOKEN_VARS, ...Object.values(ORB_VARS).flat()]
 
 // Props for <GradientOrb>: base color + layers, with every color as a theme variable.
 const cache = {}
@@ -27,6 +28,7 @@ export function orbProps(id) {
   if (cache[id]) return cache[id]
   const color = (slot) => (slot === 'transparent' ? 'transparent' : `var(${orbVar(id, slot)})`)
   cache[id] = {
+    orb: id, // GradientOrb marks its element with it (data-orb), so the theme morph knows which orbs are on screen
     base: color(0),
     layers: ORBS[id].layers.map((l) => ({ ...l, stops: l.stops.map(([c, pos]) => [color(c), pos]) })),
     // top first: depth, sun, accent (the accent keeps its position in the layer order)
@@ -40,6 +42,7 @@ export function orbProps(id) {
   return cache[id]
 }
 
+let transitionsOn = false // crossfades are enabled after the first paint (see initTheme)
 let current = DEFAULT_THEME
 const listeners = new Set()
 
@@ -94,18 +97,44 @@ export function initTheme() {
   if (registered) {
     // Enable the crossfade only after the first paint, so the initial theme is not animated.
     setTimeout(() => {
-      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR].map((n) => `${n} ${FADE_MS}ms ease-in-out`).concat(MODE_VARS.map((n) => `${n} ${MODE_FADE_MS}ms ease-in-out`)).join(',')
+      transitionsOn = true
+      setTransitions()
     }, 0)
   }
+}
+
+// Orbs that can actually be seen right now: not under a fully covering screen, not a paused offscreen widget page, not
+// hidden under the (opaque) Homepage layer.
+function visibleOrbIds() {
+  const ids = new Set()
+  const homepageUp = !!document.querySelector('.drag-up-layer')
+  for (const el of document.querySelectorAll('.gradient-orb[data-orb]')) {
+    if (el.closest('.stage__flow--hidden, .widget-viewer__page[data-paused]')) continue
+    if (el.closest('[data-covered]') && !el.closest('.rest-screen__overlay')) continue // the open widget overlay is what covers it
+    if (homepageUp && el.closest('.rest-screen')) continue
+    ids.add(el.dataset.orb)
+  }
+  return ids
+}
+
+// Which variables morph: the theme tokens and the grain always; the colors of an orb only while that orb is visible. Every
+// other variable changes instantly (nobody sees it), so a theme switch restyles only what is on screen.
+function setTransitions() {
+  const morph = [...TOKEN_VARS, GRAIN_VAR, ...[...visibleOrbIds()].flatMap((id) => ORB_VARS[id] ?? [])].map((n) => `${n} ${FADE_MS}ms ease-in-out`)
+  const modes = MODE_VARS.map((n) => `${n} ${MODE_FADE_MS}ms ease-in-out`)
+  document.documentElement.style.transition = [...morph, ...modes].join(',')
 }
 
 export function setTheme(id) {
   if (!THEMES[id] || id === current) return
   current = id
+  if (transitionsOn) setTransitions() // before the change, so the new list applies to it
   applyTheme(id)
   if (!writeItem(KEY, id)) console.warn('[tema] Não foi possível salvar o tema no localStorage; a escolha vale só até recarregar a página.')
   listeners.forEach((l) => l())
 }
+
+export const currentTheme = () => current
 
 export function useTheme() {
   const id = useSyncExternalStore(

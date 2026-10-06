@@ -11,6 +11,8 @@ import { createVoiceSimulator } from '../../voiceSim.js'
 import { speakResult, cancelSpeech } from '../../speech.js'
 import { saveToHistory } from '../../history.js'
 import { run, dur, prefersReducedMotion } from '../../motion.js'
+import { currentTheme } from '../../theme/theme.js'
+import { THEMES } from '../../theme/themes.js'
 import '../screens.css'
 import './voice.css'
 import './voiceFlow.css'
@@ -57,6 +59,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
   const prevPhase = useRef(null)
   const homeUi = useRef(null)
   const orb = useRef(null)
+  const orbScale = useRef(null)
   const icon = useRef(null)
   const linesWrap = useRef(null)
   const lines = useRef(null)
@@ -66,8 +69,11 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
   const lengths = useRef(FIGMA_LENGTHS.map(() => MIN_LEN))
   const sim = useRef(null)
 
+  const [scaledStart, setScaledStart] = useState(false) // the Homepage -> recording shrink uses a transform (themes without grain)
   const inHome = phase === 'home'
-  const orbSize = inHome ? ORB_HOME : phase === 'starting' || phase === 'idle' || phase === 'recording' ? ORB_REC : 0
+  // The orb's layout size. When the shrink is a transform (scaledStart), the orb keeps its Homepage size while it shrinks (no
+  // layout, no re-blur per frame) and takes its recording size (no transform) when the shrink ends.
+  const orbSize = inHome || (phase === 'starting' && scaledStart) ? ORB_HOME : phase === 'starting' || phase === 'idle' || phase === 'recording' ? ORB_REC : 0
   const showLines = phase === 'starting' || phase === 'idle' || phase === 'recording'
   const showShapes = phase === 'sending' || phase === 'thinking'
   const showResult = phase === 'result' || phase === 'leaving'
@@ -129,7 +135,11 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
       case 'starting': {
         const all = [
           A(homeUi.current, fade(1, 0), START_MS),
-          A(orb.current, sizeKf(ORB_HOME, ORB_REC), START_MS),
+          // Same curve either way (size = ORB_HOME * scale). With a transform the orb is not re-laid-out or re-blurred per frame, but it
+          // would also scale the grain texture, so themes with grain keep the width/height animation (identical look).
+          scaledStart
+            ? A(orbScale.current, [{ scale: '1' }, { scale: String(ORB_REC / ORB_HOME) }], START_MS, { fill: 'forwards' })
+            : A(orb.current, sizeKf(ORB_HOME, ORB_REC), START_MS),
           A(icon.current, fade(1, 0), START_MS * 0.6),
           A(linesWrap.current, fade(0, 1), START_MS),
         ]
@@ -163,7 +173,6 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
         }
         const all = [
           A(linesWrap.current, fade(1, 0), SHRINK_MS, { easing: 'ease-in' }),
-          A(orb.current, sizeKf(ORB_REC, 0), SEND_MS * 0.8, { easing: 'ease-in' }),
           A(shapesWrap.current, [{ opacity: 0, transform: 'scale(0.6)' }, { opacity: 1, transform: 'scale(1)' }], SEND_MS * 0.45, { easing: 'ease-out', delay: dur(SEND_MS * 0.55), fill: 'backwards' }),
         ]
         then(Promise.all(all), () => setPhase('thinking'))
@@ -206,7 +215,10 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
   }, [phase])
 
   const onOrbClick = () => {
-    if (phase === 'home') setPhase('starting')
+    if (phase === 'home') {
+      setScaledStart(!THEMES[currentTheme()].grain) // decided once, when the shrink starts
+      setPhase('starting')
+    }
     else if (phase === 'recording') {
       setResult(fixedResult ?? pickRandomResult())
       setPhase('sending')
@@ -237,9 +249,11 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
       </div>
 
       <div ref={orb} className="voice-flow__orb" style={{ width: orbSize, height: orbSize, visibility: orbSize ? 'visible' : 'hidden', pointerEvents: orbClickable ? 'auto' : 'none' }}>
-        <WidgetHit label={phase === 'recording' ? 'Enviar' : 'Falar'} className="voice-flow__orb-hit" onActivate={onOrbClick}>
-          <MicButton size={ORB_HOME} showIcon={false} style={{ width: '100%', height: '100%' }} />
-        </WidgetHit>
+        <div ref={orbScale} className="voice-flow__orb-scale">
+          <WidgetHit label={phase === 'recording' ? 'Enviar' : 'Falar'} className="voice-flow__orb-hit" onActivate={onOrbClick}>
+            <MicButton size={ORB_HOME} showIcon={false} style={{ width: '100%', height: '100%' }} />
+          </WidgetHit>
+        </div>
       </div>
       <Microphone ref={icon} className="voice-flow__icon" size={80} weight="light" color="currentColor" style={{ opacity: inHome ? 1 : 0, color: 'var(--fg)' }} />
 

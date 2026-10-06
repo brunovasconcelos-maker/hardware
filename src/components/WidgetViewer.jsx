@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useLayoutEffect } from 'react'
 import { flushSync } from 'react-dom'
 import PageDots from './PageDots.jsx'
 import { run, dur, SNAP_MS } from '../motion.js'
@@ -35,6 +35,18 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
   const inRange = (i) => i >= min && i <= max
   const visible = [index - 1, index, index + 1].filter(inRange)
 
+  // Only the centered page animates its gradient. The neighbors are paused (data-paused) and resume the moment a pointer goes
+  // down (a swipe can reveal them from the first pixel), so a page never shows frozen or pops while it slides in; they pause
+  // again once the viewer settles. Done on the DOM (not through React) because pointer events change it between renders.
+  const syncPaused = (resumeNeighbors = false) => {
+    for (const el of trackRef.current?.children ?? []) {
+      const page = Number(el.dataset.page)
+      if (page === indexRef.current || resumeNeighbors) el.removeAttribute('data-paused')
+      else el.setAttribute('data-paused', '')
+    }
+  }
+  useLayoutEffect(() => syncPaused(), [index]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const rubber = (dx) => {
     const target = indexRef.current - Math.sign(dx)
     return inRange(target) ? dx : dx * 0.35
@@ -47,6 +59,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     anim.cancel()
     el.style.transform = ''
     busy.current = false
+    syncPaused()
   }
 
   async function changePage(dir, fromX) {
@@ -72,6 +85,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     if (disabled || busy.current || drag.current) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
     e.preventDefault()
+    syncPaused(true)
     e.currentTarget.setPointerCapture(e.pointerId)
     drag.current = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lock: null, dx: 0, dy: 0, samples: [{ t: e.timeStamp, x: e.clientX, y: e.clientY }] }
   }
@@ -96,6 +110,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     drag.current = null
     if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId)
     if (e.type === 'pointercancel') d.lock = null
+    if (!d.lock) syncPaused() // a tap or cancelled press: no snap-back will follow
 
     if (d.lock === 'h' && pageCount > 1) {
       const x = rubber(d.dx)
@@ -128,7 +143,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
     >
       <div ref={trackRef} className="widget-viewer__track">
         {visible.map((i) => (
-          <div key={i} className="widget-viewer__page" style={{ left: (i - index) * W }}>
+          <div key={i} data-page={i} className="widget-viewer__page" style={{ left: (i - index) * W }}>
             {renderPage(i)}
           </div>
         ))}
