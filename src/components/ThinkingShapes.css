@@ -19,6 +19,6 @@
   flex: none;
   width: 26px;
   height: calc(var(--h) * 1px);
-  border-radius: 50%;
+  border-radius: 9999px; /* fixed round ends (13px radius): only the height changes, so 26px is a circle and taller is a pill */
   background: #ffffff;
 }

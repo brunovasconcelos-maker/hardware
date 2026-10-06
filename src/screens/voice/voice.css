@@ -23,6 +23,8 @@
   height: 650px;
   overflow-y: auto;
   overscroll-behavior: contain;
+  touch-action: none; /* drag scrolling is handled in JS (useDragScroll) */
+  user-select: none;
   scrollbar-width: none;
 }
 .result-screen__scroll::-webkit-scrollbar {

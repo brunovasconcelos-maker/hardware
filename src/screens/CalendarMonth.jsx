@@ -20,7 +20,7 @@ export default function CalendarMonth({ month, year, highlightDay }) {
 
   return (
     <>
-      <p className="calendar-month__title">{MONTHS[month - 1]}</p>
+      <p className="calendar-month__title">{MONTHS[month - 1]} {String(year % 100).padStart(2, '0')}</p>
       <div className={weeks > 5 ? 'calendar-month__grid calendar-month__grid--tight' : 'calendar-month__grid'}>
         <div className="calendar-month__row calendar-month__row--muted">
           {WEEKDAYS.map((d, i) => (

@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { List, CirclesFour, Check } from '@phosphor-icons/react'
+import { useDragScroll } from '../../hooks/useDragScroll.js'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
 import './voice.css'
@@ -6,13 +8,15 @@ import './voice.css'
 // Result (Figma 158:2173). Only the text area scrolls; icons, the bottom fade and the OK button stay fixed.
 // `onGridClick` / `onOkClick` are optional; the history (list) icon has no action yet.
 export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, onOkClick }) {
+  const scroll = useRef(null)
+  useDragScroll(scroll)
   const Grid = onGridClick ? WidgetHit : 'div'
   const gridProps = onGridClick ? { label: 'Abrir menu', onActivate: onGridClick } : {}
   const Ok = onOkClick ? WidgetHit : 'div'
   const okProps = onOkClick ? { label: 'Concluir', onActivate: onOkClick } : {}
   return (
     <div className="voice-screen result-screen">
-      <div className="result-screen__scroll">
+      <div ref={scroll} className="result-screen__scroll">
         <div className="result-screen__content">
           <div className="result-screen__head">
             <p className="result-screen__title">{result.title}</p>
