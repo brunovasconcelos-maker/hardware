@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { ORBS, COLORIDO_COLORS } from './orbs.js'
-import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, EDGE_DEPTH_GLOWS, SUN_GLOWS } from './themes.js'
+import { THEMES, DEFAULT_THEME, glowOf, DEPTH_GLOWS, EDGE_DEPTH_GLOWS, INNER_DEPTH_GLOWS, LIGHT_GLOWS, SUN_GLOWS } from './themes.js'
 import { readItem, writeItem } from '../storage.js'
 import { registerModeVars, initMode, MODE_VARS, FADE_MS as MODE_FADE_MS } from './mode.js'
 
@@ -17,7 +17,7 @@ const KEY = 'hardware.theme'
 const FADE_MS = 600 // theme colors and grain morph (mode tokens keep their own 400ms, see mode.js)
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
-const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent', '--depth', '--depth-edge', '--sun']
+const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent', '--depth', '--depth-edge', '--depth-inner', '--light', '--sun']
 const GRAIN_VAR = '--grain'
 const ORB_VARS = Object.fromEntries(Object.entries(COLORIDO_COLORS).map(([id, colors]) => [id, colors.map((_, i) => orbVar(id, i))]))
 const ALL_VARS = [...TOKEN_VARS, ...Object.values(ORB_VARS).flat()]
@@ -31,8 +31,10 @@ export function orbProps(id) {
     orb: id, // GradientOrb marks its element with it (data-orb), so the theme morph knows which orbs are on screen
     base: color(0),
     layers: ORBS[id].layers.map((l) => ({ ...l, stops: l.stops.map(([c, pos]) => [color(c), pos]) })),
-    // top first: depth, sun, accent (the accent keeps its position in the layer order)
+    // top first: light, inner depth, depth, edge depth, sun, accent (the accent keeps its position in the layer order)
     glows: [
+      LIGHT_GLOWS[id] && { ...LIGHT_GLOWS[id], hold: 25, color: 'var(--light)' },
+      INNER_DEPTH_GLOWS[id] && { ...INNER_DEPTH_GLOWS[id], hold: 25, color: 'var(--depth-inner)' },
       DEPTH_GLOWS[id] && { ...DEPTH_GLOWS[id], hold: 40, color: 'var(--depth)' },
       EDGE_DEPTH_GLOWS[id] && { ...EDGE_DEPTH_GLOWS[id], hold: 20, color: 'var(--depth-edge)' },
       SUN_GLOWS[id] && { ...SUN_GLOWS[id], hold: 30, color: 'var(--sun)' },
@@ -82,6 +84,8 @@ export function applyTheme(id) {
   root.style.setProperty('--accent', t.accent)
   root.style.setProperty('--depth', t.depth ?? 'transparent')
   root.style.setProperty('--depth-edge', t.depthEdge ?? 'transparent')
+  root.style.setProperty('--depth-inner', t.depthInner ?? 'transparent')
+  root.style.setProperty('--light', t.light ?? 'transparent')
   root.style.setProperty('--sun', t.sun ?? 'transparent')
   root.style.setProperty(GRAIN_VAR, t.grain ? '1' : '0')
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))

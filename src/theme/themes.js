@@ -1,11 +1,5 @@
 import { COLORIDO_COLORS } from './orbs.js'
 
-// ---------------------------------------------------------------------------------------------------------------
-// Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch, except Preto, see below).
-export const PALETTES = {
-  preto: { 100: '#9897D5', 200: '#7A76BF', 300: '#605AA7', 400: '#4B438E', 500: '#3C3476', 600: '#2F2863', 700: '#261F52' },
-}
-
 // Orbs that belong to the same widget share one tone combination (compact widget + its full screens).
 const GROUP_OF = {
   mic: 'mic',
@@ -19,21 +13,8 @@ const GROUP_OF = {
   digital: 'clockB',
 }
 
-// Gradient recipes for the monochrome themes: 2–4 palette tones per widget, a different combination for each widget.
-// Each orb keeps its Colorido composition; its slots are mapped onto these tones by lightness (see mapToTones).
-//   Preto: dark tones (300–700). 
-export const TONES = {
-  preto: {
-    mic: [300, 400, 500, 700], tasks: [300, 500, 700], weather: [400, 600], usage: [300, 600, 700], usageDaily: [500, 700],
-    battery: [400, 500, 700], calendar: [300, 400, 600], clockA: [300, 500, 600, 700], clockB: [400, 700],
-  },
-}
-
-// One complementary accent per monochrome theme: an extra soft glow on every orb (part of the theme tokens, `--accent`).
-const ACCENTS = { preto: '#D6812E' }
-
-// Where the glow sits on each widget group's orbs (center + radius, % of the orb), varied between groups. Each disc
-// covers 19–25% of the orb's area, so the accent is never dominant.
+// The per-orb accent layer (`--accent`). No theme uses an accent glow anymore (it is transparent in all of them); the layer is
+// kept because the glow layers' resting scales depend on their order. Positions (center + radius, % of the orb) per widget group.
 export const ACCENT_GLOWS = {
   mic: { at: '28% 72%', size: '26%' },
   tasks: { at: '72% 70%', size: '25%' },
@@ -46,33 +27,6 @@ export const ACCENT_GLOWS = {
   clockB: { at: '60% 78%', size: '25%' },
 }
 export const glowOf = (orbId) => ACCENT_GLOWS[GROUP_OF[orbId]]
-
-// ---------------------------------------------------------------------------------------------------------------
-const luminance = (hex) => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b
-}
-
-// Replaces an orb's Colorido slot colors with the given tones, preserving the light/dark structure of the composition:
-// slots are ranked by lightness and spread evenly over the tones (darkest slot -> darkest tone).
-function mapToTones(colors, tones) {
-  const sortedTones = [...tones].sort((a, b) => luminance(a) - luminance(b))
-  const order = colors.map((c, i) => [luminance(c), i]).sort((a, b) => a[0] - b[0] || a[1] - b[1])
-  const out = new Array(colors.length)
-  order.forEach(([, i], rank) => {
-    out[i] = sortedTones[colors.length === 1 ? 0 : Math.round((rank * (sortedTones.length - 1)) / (colors.length - 1))]
-  })
-  return out
-}
-
-function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, okFg, swatch }) {
-  const palette = PALETTES[paletteKey]
-  const orbs = {}
-  for (const [orbId, colors] of Object.entries(COLORIDO_COLORS)) {
-    orbs[orbId] = mapToTones(colors, TONES[paletteKey][GROUP_OF[orbId]].map((n) => palette[n]))
-  }
-  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: okFg ?? palette[700], accent: ACCENTS[paletteKey], grain: false, orbs }
-}
 
 // Verde uses roles instead of the 100–700 scale (reference: Figma 204:2847). The orbs mix green, yellow and blue:
 //  - four green base tones carry the gradients (the orb's own color slots below, matched to the reference by position),
@@ -115,6 +69,18 @@ export const ROXO = {
   sun: '#FC7B89',
 }
 const ROXO_COLORS = roleColors(ROXO.base)
+
+// Preto: same logic. Three dark/mid blue-grey base tones (the lightest role repeats the mid tone, so white text keeps its
+// contrast), a dark soft region that stays inside the orb (`--depth-inner`, see INNER_DEPTH_GLOWS: never at the edges, so
+// the orbs do not melt into the dark display), a teal glow (`--sun`) and a small light highlight on some orbs (`--light`).
+export const PRETO = {
+  main: '#272524', // selector swatch
+  base: { olive: '#30393D', sage: '#5A747D', light: '#808C90', mint: '#5A747D' },
+  depth: '#1C292D',
+  sun: '#22728D',
+  light: '#ACCCD7',
+}
+const PRETO_COLORS = roleColors(PRETO.base)
 
 // Off white: same logic, light tones with black foreground. The brick depth is only a soft region toward the edges of the
 // orb (`--depth-edge`, ~22% of the area, see EDGE_DEPTH_GLOWS) so black text and rings never sit on it; gold is the `--sun` glow.
@@ -160,6 +126,36 @@ export const EDGE_DEPTH_GLOWS = {
   tasksFull: { at: '100% 0%', size: '54%' },
   digital: { at: '100% 100%', size: '54%' },
 }
+// Preto's depth: ~27% of the orb, kept inside it (the disc never reaches the edge), offset in a different direction per orb.
+// Colored by `--depth-inner`.
+export const INNER_DEPTH_GLOWS = {
+  mic: { at: '42% 40%', size: '27%' },
+  tasks: { at: '58% 40%', size: '27%' },
+  usage: { at: '40% 58%', size: '27%' },
+  usageWeekly: { at: '42% 42%', size: '27%' },
+  usageDaily: { at: '60% 56%', size: '27%' },
+  calendar: { at: '56% 60%', size: '27%' },
+  calendarFull: { at: '40% 44%', size: '27%' },
+  battery: { at: '60% 42%', size: '27%' },
+  batteryFull: { at: '58% 58%', size: '27%' },
+  clock: { at: '42% 58%', size: '27%' },
+  clockFull: { at: '56% 42%', size: '27%' },
+  tasksFull: { at: '44% 60%', size: '27%' },
+  digital: { at: '60% 60%', size: '27%' },
+  weather: { at: '50% 40%', size: '27%' },
+  weatherFull: { at: '50% 60%', size: '27%' },
+}
+// Preto's light highlight: small (~12% of the orb), only on some orbs. Colored by `--light`.
+export const LIGHT_GLOWS = {
+  mic: { at: '30% 28%', size: '17%' },
+  weather: { at: '70% 30%', size: '17%' },
+  weatherFull: { at: '26% 34%', size: '17%' },
+  usage: { at: '72% 26%', size: '17%' },
+  calendar: { at: '28% 30%', size: '17%' },
+  batteryFull: { at: '72% 32%', size: '17%' },
+  clockFull: { at: '30% 66%', size: '17%' },
+  digital: { at: '70% 66%', size: '17%' },
+}
 export const SUN_GLOWS = {
   mic: { at: '100% 72%', size: '40%' },
   tasks: { at: '85% 82%', size: '38%' },
@@ -190,8 +186,21 @@ export const THEMES = {
     accent: 'transparent', // no accent glow: Colorido keeps its original colors
     orbs: COLORIDO_COLORS,
   },
-  preto: monochrome('preto', 'Preto', 'preto', { fg: '#ffffff', fgContrast: '#000000', okTone: 400, okFg: '#ffffff', swatch: '#272524' }),
-  // (Preto's OK button uses the palette main tone #4B438E: the swatch #272524 is too close to the display background.)
+  preto: {
+    id: 'preto',
+    label: 'Preto',
+    swatch: PRETO.main,
+    fg: '#ffffff',
+    fgContrast: PRETO.depth, // text on the white "today" circle
+    okBg: PRETO.sun, // OK button: #22728D with a white check
+    okFg: '#ffffff',
+    accent: 'transparent',
+    depthInner: PRETO.depth,
+    sun: PRETO.sun,
+    light: PRETO.light,
+    grain: true,
+    orbs: PRETO_COLORS,
+  },
   offwhite: {
     id: 'offwhite',
     label: 'Off white',
