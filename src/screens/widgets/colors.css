@@ -23,12 +23,6 @@
   border: 5px solid var(--on-surface);
 }
 
-/* Placeholder for a future theme: no action, no hover effect, default cursor. */
-.colors-screen__circle--placeholder {
-  background: #d9d9d9;
-  cursor: default;
-}
-
 .colors-screen__check {
   flex: none;
 }

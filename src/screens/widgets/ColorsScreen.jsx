@@ -5,12 +5,12 @@ import { THEMES } from '../../theme/themes.js'
 import '../screens.css'
 import './colors.css'
 
-// Circles from Figma 223:3078 (180px, positions on the 650px canvas). `theme` = the color theme it selects; the grey one
-// is a placeholder for a future theme (no theme, no action).
+// Circles from Figma 223:3078 (180px, positions on the 650px canvas). `theme` = the color theme it selects. (The slot at the
+// left held a grey placeholder for a future theme; Laranja took it.)
 const CIRCLES = [
   { key: 'offwhite', theme: 'offwhite', left: 135, top: 55 },
   { key: 'preto', theme: 'preto', left: 339, top: 55 },
-  { key: 'placeholder', theme: null, left: 31, top: 235 },
+  { key: 'laranja', theme: 'laranja', left: 31, top: 235 },
   { key: 'colorido', theme: 'colorido', left: 235, top: 235 },
   { key: 'verde', theme: 'verde', left: 135, top: 415 },
   { key: 'roxo', theme: 'roxo', left: 339, top: 415 },
@@ -23,7 +23,6 @@ export default function ColorsScreen({ onClose }) {
   return (
     <div data-screen-root="colors" className="menu-screen">
       {CIRCLES.map(({ key, theme, left, top }) => {
-        if (!theme) return <div key={key} data-tx="item" className="colors-screen__circle colors-screen__circle--placeholder" style={{ left, top }} aria-hidden="true" />
         const selected = theme === current
         return (
           <button

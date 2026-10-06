@@ -82,6 +82,22 @@ export const PRETO = {
 }
 const PRETO_COLORS = roleColors(PRETO.base)
 
+// Laranja: same logic. White text must stay readable, so the base layers use only the red and the orange; the light pink is a
+// small soft glow pushed to the rim of some orbs (`--pink`, PINK_GLOWS), away from the text, rings and dots. The dark purple
+// depth stays inside the orb (`--depth-inner`, like Preto). Two accents, one per orb: lime (`--sun`) or gold (`--sun-alt`, the
+// orbs in GOLD_ORBS), as strong soft glows at the SUN_GLOWS positions.
+export const LARANJA = {
+  main: '#EB684A', // selector swatch
+  base: { olive: '#E30800', sage: '#EB684A', light: '#EB684A', mint: '#E30800' },
+  pink: '#FBD1C6',
+  depth: '#2E0A3A',
+  lime: '#C2EB5E',
+  gold: '#D7A94E',
+}
+const LARANJA_COLORS = roleColors(LARANJA.base)
+// Orbs whose accent is gold; every other orb with an accent glow gets lime.
+export const GOLD_ORBS = new Set(['tasks', 'tasksFull', 'usage', 'usageWeekly', 'calendar', 'battery', 'batteryFull', 'clock'])
+
 // Off white: same logic, light tones with black foreground. The brick depth is only a soft region toward the edges of the
 // orb (`--depth-edge`, ~22% of the area, see EDGE_DEPTH_GLOWS) so black text and rings never sit on it; gold is the `--sun` glow.
 export const OFFWHITE = {
@@ -156,6 +172,17 @@ export const LIGHT_GLOWS = {
   clockFull: { at: '30% 66%', size: '17%' },
   digital: { at: '70% 66%', size: '17%' },
 }
+// Laranja's light pink: a small rim glow (~12% disc centered on the edge region), only on orbs whose rim is free of rings and dots.
+export const PINK_GLOWS = {
+  mic: { at: '82% 86%', size: '12%' },
+  weather: { at: '90% 22%', size: '12%' },
+  weatherFull: { at: '90% 24%', size: '12%' },
+  calendar: { at: '88% 80%', size: '12%' },
+  battery: { at: '88% 22%', size: '12%' },
+  tasksFull: { at: '88% 84%', size: '12%' },
+  calendarFull: { at: '88% 18%', size: '12%' },
+  digital: { at: '86% 84%', size: '12%' },
+}
 export const SUN_GLOWS = {
   mic: { at: '100% 72%', size: '40%' },
   tasks: { at: '85% 82%', size: '38%' },
@@ -229,6 +256,22 @@ export const THEMES = {
     grain: true,
     orbs: ROXO_COLORS,
   },
+  laranja: {
+    id: 'laranja',
+    label: 'Laranja',
+    swatch: LARANJA.main,
+    fg: '#ffffff',
+    fgContrast: LARANJA.depth, // text on the white "today" circle
+    okBg: LARANJA.main, // OK button: the theme's main color, white check
+    okFg: '#ffffff',
+    accent: 'transparent',
+    depthInner: LARANJA.depth,
+    sun: LARANJA.lime,
+    sunAlt: LARANJA.gold,
+    pink: LARANJA.pink,
+    grain: true,
+    orbs: LARANJA_COLORS,
+  },
   verde: {
     id: 'verde',
     label: 'Verde',
@@ -246,5 +289,5 @@ export const THEMES = {
 }
 
 // Order shown in the selector.
-export const THEME_ORDER = ['preto', 'offwhite', 'verde', 'roxo', 'colorido']
+export const THEME_ORDER = ['preto', 'offwhite', 'laranja', 'verde', 'roxo', 'colorido']
 export const DEFAULT_THEME = 'colorido'
