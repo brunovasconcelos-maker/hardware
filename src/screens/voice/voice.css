@@ -113,3 +113,7 @@
   border-radius: 360px;
   background: #6af058;
 }
+
+.result-screen [role='button'] {
+  cursor: pointer;
+}

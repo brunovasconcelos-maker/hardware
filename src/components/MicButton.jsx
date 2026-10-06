@@ -8,9 +8,9 @@ const layers = [
   { type: 'linear', angle: '225deg', stops: [['#8f12cf', '0%'], ['#9a50b8', '30%'], ['#a2b392', '55%'], ['#aec598', '100%']] },
 ]
 
-export default function MicButton({ size = 180, showIcon = true }) {
+export default function MicButton({ size = 180, showIcon = true, style }) {
   return (
-    <GradientOrb size={size} duration={15} phase={0.9} base="#9ba389" layers={layers}>
+    <GradientOrb size={size} duration={15} phase={0.9} base="#9ba389" layers={layers} style={style}>
       {showIcon && <Microphone size={size / 3} weight="light" color="#ffffff" style={{ position: 'absolute', left: size / 3, top: size / 3 }} />}
     </GradientOrb>
   )

@@ -1,0 +1,38 @@
+/* Voice flow on the Homepage layer: stacked layers whose opacity / size are animated per phase. */
+.voice-flow__home-ui,
+.voice-flow__layer,
+.voice-flow__result {
+  position: absolute;
+  inset: 0;
+}
+
+.voice-flow__home-ui > * {
+  pointer-events: inherit;
+}
+
+.voice-flow__layer {
+  pointer-events: none;
+}
+
+.voice-flow__orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.voice-flow__orb-hit {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Microphone icon (80px) centered on the orb, as in the Homepage. */
+.voice-flow__icon {
+  position: absolute;
+  left: 285px;
+  top: 285px;
+  pointer-events: none;
+}

@@ -1,9 +1,15 @@
 import { List, CirclesFour, Check } from '@phosphor-icons/react'
+import WidgetHit from '../../components/WidgetHit.jsx'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
 import './voice.css'
 
 // Result (Figma 158:2173). Only the text area scrolls; icons, the bottom fade and the OK button stay fixed.
-export default function ResultScreen({ result = VOICE_RESULTS[0] }) {
+// `onGridClick` / `onOkClick` are optional; the history (list) icon has no action yet.
+export default function ResultScreen({ result = VOICE_RESULTS[0], onGridClick, onOkClick }) {
+  const Grid = onGridClick ? WidgetHit : 'div'
+  const gridProps = onGridClick ? { label: 'Abrir menu', onActivate: onGridClick } : {}
+  const Ok = onOkClick ? WidgetHit : 'div'
+  const okProps = onOkClick ? { label: 'Concluir', onActivate: onOkClick } : {}
   return (
     <div className="voice-screen result-screen">
       <div className="result-screen__scroll">
@@ -21,12 +27,12 @@ export default function ResultScreen({ result = VOICE_RESULTS[0] }) {
       <div className="result-screen__icon result-screen__icon--left">
         <List size={56} weight="regular" color="rgba(255,255,255,0.5)" />
       </div>
-      <div className="result-screen__icon result-screen__icon--right">
+      <Grid className="result-screen__icon result-screen__icon--right" {...gridProps}>
         <CirclesFour size={56} weight="regular" color="rgba(255,255,255,0.5)" />
-      </div>
-      <div className="result-screen__ok">
+      </Grid>
+      <Ok className="result-screen__ok" {...okProps}>
         <Check size={40} weight="regular" color="#000000" />
-      </div>
+      </Ok>
     </div>
   )
 }
