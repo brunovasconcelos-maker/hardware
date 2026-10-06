@@ -1,3 +1,5 @@
+import { useId } from 'react'
+import { useGrain } from '../theme/theme.js'
 import './GradientOrb.css'
 
 const stopsToCss = (stops) =>
@@ -27,7 +29,7 @@ const blurFor = (size) => Math.min(60, Math.max(40, size * 0.085))
 
 // Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Each layer is its own
 // element that drifts with transform-only keyframes inside the clipped circle. `duration` (s) and `phase` (0–1)
-// desynchronize orbs. `accent` ({ at, size, color }) is an extra soft glow on top of all layers.
+// desynchronize orbs. A static grain overlay shows when the theme's `grain` token is on. `accent` ({ at, size, color }) is an extra soft glow on top of all layers.
 const DRIFT_VARIANTS = ['a', 'b', 'c']
 export default function GradientOrb({
   size = 180,
@@ -40,6 +42,8 @@ export default function GradientOrb({
   style,
   children,
 }) {
+  const filterId = `grain-${useId().replace(/:/g, '')}`
+  const grain = useGrain() // theme token: only themes with grain: true show it
   const blur = blurFor(size)
   const bx = 1 + 2 * ((2.5 * blur) / size) // oversized box, in orbs
   const drawn = layers.map((layer, i) => ({ layer, i }))
@@ -69,6 +73,21 @@ export default function GradientOrb({
           />
         ))}
       </div>
+      {grain && (
+        // static (not part of the drifting/blurred layers), on top of the gradient
+        <svg className="gradient-orb__noise" aria-hidden="true">
+          <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+            <feComponentTransfer>
+              <feFuncR type="linear" slope="1.5" intercept="-0.25" />
+              <feFuncG type="linear" slope="1.5" intercept="-0.25" />
+              <feFuncB type="linear" slope="1.5" intercept="-0.25" />
+            </feComponentTransfer>
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#${filterId})`} />
+        </svg>
+      )}
       <div className="gradient-orb__content">{children}</div>
     </div>
   )

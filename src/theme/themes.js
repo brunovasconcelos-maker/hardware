@@ -1,4 +1,4 @@
-import { COLORIDO_COLORS } from './orbs.js'
+import { ORBS, COLORIDO_COLORS } from './orbs.js'
 
 // ---------------------------------------------------------------------------------------------------------------
 // Palettes: 100 lightest … 700 darkest, 400 is the base tone (used for the selector swatch, except Preto, see below).
@@ -91,7 +91,47 @@ function monochrome(id, label, paletteKey, { fg, fgContrast, okTone, swatch }) {
   for (const [orbId, colors] of Object.entries(COLORIDO_COLORS)) {
     orbs[orbId] = mapToTones(colors, TONES[paletteKey][GROUP_OF[orbId]].map((n) => palette[n]))
   }
-  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], accent: ACCENTS[paletteKey], orbs }
+  return { id, label, swatch: swatch ?? palette[400], fg, fgContrast, okBg: palette[okTone], okFg: palette[700], accent: ACCENTS[paletteKey], grain: false, orbs }
+}
+
+// Verde uses roles instead of the 100–700 scale: four base tones carry the gradients, the navy "depth" tone is only a deep
+// shadow (one small radial blob in some orbs, never dominant), yellow is the accent glow and navy is also the foreground.
+export const VERDE = {
+  main: '#C2D09F', // selector swatch
+  base: { olive: '#758256', sage: '#C2D09F', light: '#E3E9CD', mint: '#C9EBDA' },
+  depth: '#090F45',
+  accent: '#F6EE45',
+}
+const { olive, sage, light, mint } = VERDE.base
+// Base tones per widget group (a different combination for each) and whether the group gets the navy shadow.
+const VERDE_GROUPS = {
+  mic: { tones: [olive, sage, mint], depth: true },
+  tasks: { tones: [sage, light, olive], depth: true },
+  weather: { tones: [light, mint, sage] },
+  usage: { tones: [olive, light, mint], depth: true },
+  usageDaily: { tones: [sage, mint, light] },
+  battery: { tones: [sage, olive, mint], depth: true },
+  calendar: { tones: [light, sage, olive] },
+  clockA: { tones: [olive, sage, light, mint], depth: true },
+  clockB: { tones: [sage, light, mint] },
+}
+
+// The depth slot is the darkest slot that only appears in a radial blob (so it fades out) and is not the orb's base.
+function verdeColors(orbId) {
+  const colors = COLORIDO_COLORS[orbId]
+  const { tones, depth } = VERDE_GROUPS[GROUP_OF[orbId]]
+  const out = mapToTones(colors, tones)
+  if (depth) {
+    const radialOnly = new Set()
+    const other = new Set([0])
+    for (const l of ORBS[orbId].layers) for (const [c] of l.stops) (l.type === 'radial' ? radialOnly : other).add(c)
+    const candidates = [...radialOnly].filter((c) => c !== 'transparent' && !other.has(c))
+    if (candidates.length) {
+      const dark = candidates.reduce((a, b) => (luminance(colors[a]) <= luminance(colors[b]) ? a : b))
+      out[dark] = VERDE.depth
+    }
+  }
+  return out
 }
 
 export const THEMES = {
@@ -104,6 +144,7 @@ export const THEMES = {
     fgContrast: '#000000',
     okBg: '#6af058',
     okFg: '#000000',
+    grain: false,
     accent: 'transparent', // no accent glow: Colorido keeps its original colors
     orbs: COLORIDO_COLORS,
   },
@@ -111,9 +152,21 @@ export const THEMES = {
   offwhite: monochrome('offwhite', 'Off white', 'offwhite', { fg: '#000000', fgContrast: '#ffffff', okTone: 100 }),
   roxo: monochrome('roxo', 'Roxo', 'roxo', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),
   azul: monochrome('azul', 'Azul', 'azul', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),
+  verde: {
+    id: 'verde',
+    label: 'Verde',
+    swatch: VERDE.main,
+    fg: VERDE.depth,
+    fgContrast: light,
+    okBg: light,
+    okFg: VERDE.depth,
+    accent: VERDE.accent,
+    grain: true,
+    orbs: Object.fromEntries(Object.keys(COLORIDO_COLORS).map((id) => [id, verdeColors(id)])),
+  },
   laranja: monochrome('laranja', 'Laranja', 'laranja', { fg: '#ffffff', fgContrast: '#000000', okTone: 400 }),
 }
 
 // Order shown in the selector.
-export const THEME_ORDER = ['preto', 'offwhite', 'roxo', 'azul', 'laranja', 'colorido']
+export const THEME_ORDER = ['preto', 'offwhite', 'roxo', 'azul', 'laranja', 'verde', 'colorido']
 export const DEFAULT_THEME = 'colorido'

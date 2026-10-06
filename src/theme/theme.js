@@ -6,6 +6,7 @@ import { THEMES, DEFAULT_THEME, glowOf } from './themes.js'
 //   --o-<orb>-<slot>   gradient colors of each orb (the orb compositions live in orbs.js)
 //   --fg / --fg-contrast   foreground on gradients (text, icons, rings, hands, page dots) and its inverse
 //   --ok-bg / --ok-fg      Result OK button and its check icon
+//   --grain                1 when the theme uses the grain overlay, else 0 (see useGrain)
 //   --accent               complementary glow added to every orb (transparent in Colorido)
 // Components only reference these variables (never literal colors), so switching themes restyles every screen, and
 // the registered properties let the browser crossfade between themes without touching the animated gradient layers.
@@ -14,6 +15,7 @@ const FADE_MS = 400
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
 const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--accent']
+const GRAIN_VAR = '--grain'
 const ALL_VARS = [...TOKEN_VARS, ...Object.entries(COLORIDO_COLORS).flatMap(([id, colors]) => colors.map((_, i) => orbVar(id, i)))]
 
 // Props for <GradientOrb>: base color + layers, with every color as a theme variable.
@@ -31,6 +33,31 @@ export function orbProps(id) {
 
 let current = DEFAULT_THEME
 const listeners = new Set()
+
+// The grain overlay is only mounted while a theme uses it (feTurbulence is not free): it appears right away and, when
+// the theme changes to one without grain, stays until its 400ms fade-out (--grain, crossfaded) is done.
+let grainMounted = false
+let grainTimer = 0
+const grainListeners = new Set()
+function setGrain(on) {
+  clearTimeout(grainTimer)
+  const set = (v) => {
+    if (grainMounted === v) return
+    grainMounted = v
+    grainListeners.forEach((l) => l())
+  }
+  if (on) set(true)
+  else grainTimer = setTimeout(() => set(false), FADE_MS + 50)
+}
+export function useGrain() {
+  return useSyncExternalStore(
+    (l) => {
+      grainListeners.add(l)
+      return () => grainListeners.delete(l)
+    },
+    () => grainMounted,
+  )
+}
 
 function readStored() {
   try {
@@ -53,6 +80,11 @@ function register() {
       /* already registered (hot reload) */
     }
   }
+  try {
+    CSS.registerProperty({ name: GRAIN_VAR, syntax: '<number>', inherits: true, initialValue: 0 })
+  } catch {
+    /* already registered (hot reload) */
+  }
   return true
 }
 
@@ -64,6 +96,8 @@ export function applyTheme(id) {
   root.style.setProperty('--ok-bg', t.okBg)
   root.style.setProperty('--ok-fg', t.okFg)
   root.style.setProperty('--accent', t.accent)
+  root.style.setProperty(GRAIN_VAR, t.grain ? '1' : '0')
+  setGrain(!!t.grain)
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))
   root.dataset.theme = id
 }
@@ -76,7 +110,7 @@ export function initTheme() {
   if (registered) {
     // Enable the crossfade only after the first paint, so the initial theme is not animated.
     setTimeout(() => {
-      document.documentElement.style.transition = ALL_VARS.map((n) => `${n} ${FADE_MS}ms ease-in-out`).join(',')
+      document.documentElement.style.transition = [...ALL_VARS, GRAIN_VAR].map((n) => `${n} ${FADE_MS}ms ease-in-out`).join(',')
     }, 0)
   }
 }
