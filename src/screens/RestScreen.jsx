@@ -10,10 +10,11 @@ import { ORBIT_ANGLES } from '../orbit.js'
 import './RestScreen.css'
 
 // "Tela de Descanso": microphone in the center, six widgets on a shared circular orbit.
-export default function RestScreen() {
+// `orbitPaused` freezes (and resumes) the orbit rotation without resetting its position.
+export default function RestScreen({ orbitPaused = false }) {
   return (
     <div className="rest-screen">
-      <div className="rest-screen__orbit">
+      <div className="rest-screen__orbit" data-paused={orbitPaused}>
         <OrbitItem angle={ORBIT_ANGLES.tasks}><TasksWidget /></OrbitItem>
         <OrbitItem angle={ORBIT_ANGLES.weather}><WeatherWidget /></OrbitItem>
         <OrbitItem angle={ORBIT_ANGLES.usage}><UsageWidget /></OrbitItem>

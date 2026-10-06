@@ -10,7 +10,7 @@ const layers = [
 
 export default function MicButton() {
   return (
-    <GradientOrb size={180} base="#9ba389" layers={layers}>
+    <GradientOrb size={180} duration={15} phase={0.9} base="#9ba389" layers={layers}>
       <Microphone size={60} weight="light" color="#ffffff" style={{ position: 'absolute', left: 60, top: 60 }} />
     </GradientOrb>
   )

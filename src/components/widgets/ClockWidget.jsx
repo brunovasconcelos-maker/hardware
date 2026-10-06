@@ -21,7 +21,7 @@ const hand = (x1, y1, x2, y2, opacity = 1) => (
 
 export default function ClockWidget() {
   return (
-    <GradientOrb size={180} base="#6f3aa6" layers={layers}>
+    <GradientOrb size={180} duration={20} phase={0.4} base="#6f3aa6" layers={layers}>
       <svg className="clock-widget__face" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
         {DOT_ANGLES.map((a) => {
           const r = (a * Math.PI) / 180

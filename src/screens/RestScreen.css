@@ -12,6 +12,29 @@
   height: 0;
 }
 
+/* One full clockwise turn per minute; items counter-rotate (see OrbitItem.css). */
+.rest-screen__orbit {
+  --orbit-period: 60s;
+  will-change: transform;
+  animation: orbit-spin var(--orbit-period) linear infinite;
+}
+
+.rest-screen__orbit[data-paused='true'],
+.rest-screen__orbit[data-paused='true'] .orbit-item__upright {
+  animation-play-state: paused;
+}
+
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rest-screen__orbit {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 .rest-screen__mic > * {
   position: absolute;
   left: -90px;

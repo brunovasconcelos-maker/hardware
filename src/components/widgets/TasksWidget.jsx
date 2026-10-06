@@ -11,7 +11,7 @@ const layers = [
 
 export default function TasksWidget({ done = 3, total = 4 }) {
   return (
-    <GradientOrb size={180} base="#5a12b0" layers={layers}>
+    <GradientOrb size={180} duration={14} phase={0.1} base="#5a12b0" layers={layers}>
       <ProgressRing value={done / total} />
       <div className="tasks-widget__text">
         <p className="tasks-widget__count">{done}/{total}</p>

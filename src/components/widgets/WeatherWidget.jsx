@@ -11,7 +11,7 @@ const layers = [
 
 export default function WeatherWidget({ temperature = 21 }) {
   return (
-    <GradientOrb size={180} base="#cc9aa6" layers={layers}>
+    <GradientOrb size={180} duration={17} phase={0.55} base="#cc9aa6" layers={layers}>
       <p className="weather-widget__temp">{temperature}°</p>
     </GradientOrb>
   )

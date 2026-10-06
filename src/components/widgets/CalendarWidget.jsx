@@ -9,7 +9,7 @@ const layers = [
 
 export default function CalendarWidget({ weekday = 'Qua', day = 24 }) {
   return (
-    <GradientOrb size={180} base="#de4cae" layers={layers}>
+    <GradientOrb size={180} duration={13} phase={0.8} base="#de4cae" layers={layers}>
       <p className="calendar-widget__date">
         <span>{weekday}</span>
         <span>{day}</span>

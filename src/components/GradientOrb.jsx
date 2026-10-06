@@ -15,16 +15,16 @@ export function buildLayer(layer) {
   return `radial-gradient(ellipse ${size}at ${layer.at ?? '50% 50%'}, ${stopsToCss(layer.stops)})`
 }
 
-export function buildBackground(layers = [], base = 'transparent') {
-  return [...layers.map(buildLayer), `linear-gradient(${base}, ${base})`].join(', ')
-}
-
-// Circular gradient surface: a base color, stacked CSS gradient layers (first = top) and an
-// SVG feTurbulence grain overlay. Layers are plain props so they can be animated later.
+// Circular gradient surface: a base color, stacked CSS gradient layers (first = top) and a static
+// SVG feTurbulence grain overlay. Each layer is its own element that drifts with transform-only
+// keyframes inside the clipped circle. `duration` (s) and `phase` (0–1) desynchronize orbs.
+const DRIFT_VARIANTS = ['a', 'b', 'c']
 export default function GradientOrb({
   size = 180,
   base,
-  layers,
+  layers = [],
+  duration = 16,
+  phase = 0,
   noise = { opacity: 0.55, frequency: 0.9, blend: 'overlay' },
   className = '',
   style,
@@ -34,8 +34,22 @@ export default function GradientOrb({
   return (
     <div
       className={`gradient-orb ${className}`}
-      style={{ width: size, height: size, background: buildBackground(layers, base), ...style }}
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: base,
+        '--orb-duration': `${duration}s`,
+        '--orb-delay': `${-duration * phase}s`,
+        ...style,
+      }}
     >
+      {layers.map((layer, i) => (
+        <div
+          key={i}
+          className={`gradient-orb__layer gradient-orb__layer--${layer.type === 'linear' ? 'cover' : 'blob'}-${DRIFT_VARIANTS[i % 3]}`}
+          style={{ background: buildLayer(layer), animationDirection: i % 2 ? 'reverse' : 'normal' }}
+        />
+      ))}
       <svg className="gradient-orb__noise" aria-hidden="true" style={{ opacity: noise.opacity, mixBlendMode: noise.blend }}>
         <filter id={filterId} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency={noise.frequency} numOctaves="3" stitchTiles="stitch" />
