@@ -1,0 +1,7 @@
+.orbit-item {
+  --angle: calc(var(--base-angle) + var(--orbit-rotation, 0deg));
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(var(--angle)) translateX(var(--orbit-radius)) rotate(calc(var(--angle) * -1));
+}

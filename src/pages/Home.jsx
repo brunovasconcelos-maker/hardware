@@ -1,5 +1,10 @@
 import DeviceDisplay from '../components/DeviceDisplay.jsx'
+import RestScreen from '../screens/RestScreen.jsx'
 
 export default function Home() {
-  return <DeviceDisplay />
+  return (
+    <DeviceDisplay>
+      <RestScreen />
+    </DeviceDisplay>
+  )
 }

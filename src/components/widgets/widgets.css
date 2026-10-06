@@ -1,0 +1,97 @@
+.widget-text,
+.tasks-widget__text,
+.usage-widget__text,
+.weather-widget__temp,
+.calendar-widget__date {
+  position: absolute;
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+}
+
+/* Tarefas */
+.tasks-widget__text {
+  left: 45px;
+  top: 49px;
+  width: 89px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.tasks-widget__count,
+.tasks-widget__label,
+.usage-widget__value,
+.usage-widget__label {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+.tasks-widget__count {
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -2.24px;
+  text-align: left;
+}
+.tasks-widget__label {
+  font-weight: 400;
+  font-size: 15.522px;
+  line-height: 1.2;
+}
+
+/* Clima */
+.weather-widget__temp {
+  left: 90.5px;
+  top: 30px;
+  transform: translateX(-50%);
+  font-weight: 400;
+  font-size: 100px;
+  line-height: 1.2;
+  letter-spacing: -4px;
+  white-space: nowrap;
+}
+
+/* Calendário */
+.calendar-widget__date {
+  left: 30px;
+  top: 34px;
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.calendar-widget__date span {
+  display: block;
+}
+
+/* Usage */
+.usage-widget__text {
+  left: 26px;
+  top: calc(50% - 0.43px);
+  transform: translateY(-50%);
+  width: 127.088px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+.usage-widget__value {
+  margin-bottom: -4.851px;
+  font-weight: 500;
+  font-size: 67.91px;
+  letter-spacing: -2.7164px;
+}
+.usage-widget__label {
+  font-weight: 400;
+  font-size: 15.522px;
+  white-space: nowrap;
+}
+
+/* Hora */
+.clock-widget__face {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+}
