@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Stage from './pages/Stage.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
+import { VoiceIdlePreview, VoiceRecordingPreview, VoiceThinkingPreview, VoiceResultPreview } from './pages/VoicePreview.jsx'
 import WidgetViewer from './components/WidgetViewer.jsx'
 import { WIDGET_VIEWS } from './screens/widgetViews.jsx'
 
@@ -35,6 +36,10 @@ export default function App() {
           }
         />
       ))}
+      <Route path="/voz/idle" element={<VoiceIdlePreview />} />
+      <Route path="/voz/gravando" element={<VoiceRecordingPreview />} />
+      <Route path="/voz/pensando" element={<VoiceThinkingPreview />} />
+      <Route path="/voz/resultado" element={<VoiceResultPreview />} />
       <Route path="*" element={<Stage />} />
     </Routes>
   )

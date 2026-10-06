@@ -1,0 +1,115 @@
+/* Voice mode screens (Figma coordinates on a 650x650 canvas) */
+.voice-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.voice-screen__orb {
+  position: absolute;
+  left: 255px;
+  top: 255px;
+  width: 140px;
+  height: 140px;
+}
+
+/* Result */
+.result-screen__scroll {
+  position: absolute;
+  left: 147px;
+  top: 0;
+  width: 363px;
+  height: 650px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.result-screen__scroll::-webkit-scrollbar {
+  display: none;
+}
+.result-screen__content {
+  box-sizing: border-box;
+  padding: 100px 0 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+}
+.result-screen__head {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.result-screen__title,
+.result-screen__meta,
+.result-screen__body {
+  margin: 0;
+}
+.result-screen__title {
+  font-size: 32px;
+}
+.result-screen__meta,
+.result-screen__body {
+  font-size: 24px;
+}
+.result-screen__divider {
+  position: relative;
+  flex: none;
+  width: 71px;
+  height: 0; /* Figma: zero layout height; the 2px line is drawn centered on it */
+}
+.result-screen__divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.result-screen__fade {
+  position: absolute;
+  left: calc(50% + 5.5px);
+  top: 429px;
+  width: 677px;
+  height: 221px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgba(20, 21, 21, 0), #141515);
+  pointer-events: none;
+}
+.result-screen__icon {
+  position: absolute;
+  top: 252px;
+  width: 145px;
+  height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.result-screen__icon--left {
+  left: 0;
+}
+.result-screen__icon--right {
+  right: 0;
+}
+.result-screen__ok {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: 522px;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  height: 88px;
+  padding: 10px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 360px;
+  background: #6af058;
+}

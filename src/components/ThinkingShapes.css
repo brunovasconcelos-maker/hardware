@@ -1,0 +1,24 @@
+@property --h {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 26;
+}
+
+.thinking-shapes {
+  position: absolute;
+  left: 256px;
+  top: 299px;
+  width: 138px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.thinking-shape {
+  flex: none;
+  width: 26px;
+  height: calc(var(--h) * 1px);
+  border-radius: 50%;
+  background: #ffffff;
+}
