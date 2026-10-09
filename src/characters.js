@@ -9,6 +9,29 @@ for (const [id, src] of Object.entries(CHARACTER_SRC)) {
   else if (typeof Image !== 'undefined') new Image().src = src
 }
 
+// The Azul character also has a looping video (src/assets/characters/azul.mp4, H.264, no audio), used on the Result's Personagem
+// view in the Azul theme. A missing file only logs an error: Azul then keeps its PNG.
+const VIDEOS = import.meta.glob('./assets/characters/azul.mp4', { eager: true, import: 'default' })
+export const AZUL_VIDEO = VIDEOS['./assets/characters/azul.mp4']
+if (!AZUL_VIDEO) console.error('[personagem] Arquivo ausente: src/assets/characters/azul.mp4 — o Azul usa só o PNG.')
+
+// Downloads the video into memory once (while the thinking animation plays), so the <video> starts instantly from a blob URL.
+let blobUrl = null
+let loading = null
+export function preloadAzulVideo() {
+  if (!AZUL_VIDEO || loading) return
+  loading = fetch(AZUL_VIDEO)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then((b) => {
+      blobUrl = URL.createObjectURL(b)
+    })
+    .catch((e) => {
+      loading = null
+      console.error('[personagem] Não foi possível pré-carregar azul.mp4:', e.message)
+    })
+}
+export const azulVideoUrl = () => blobUrl ?? AZUL_VIDEO
+
 // Where each character sits in the rest-screen circle (Figma 397:5600, 418:5662, 418:5717, 435:5788), as fractions of the circle
 // (the Figma circles measure 602.308 for Roxo/Verde and 589.569 for Laranja/Azul). The box is cropped like Figma's object-cover.
 const place = (S, left, top, w, h) => ({ left: left / S, top: top / S, w: w / S, h: h / S })

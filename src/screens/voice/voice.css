@@ -31,6 +31,7 @@
   top: 0;
   width: 650px;
   height: 650px;
+  overflow: hidden; /* the character box and the fade are wider than the page: never bleed into the neighboring page */
 }
 .result-screen__character {
   position: absolute;
@@ -44,6 +45,44 @@
   transition: opacity 400ms ease-in-out; /* only the theme crossfade; the character itself never animates */
   pointer-events: none;
 }
+.result-screen__video {
+  position: absolute;
+  max-width: none;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: lighten; /* dark mode: the baked black background merges with the display background */
+}
+.result-screen__video[data-ready] {
+  opacity: 1;
+}
+.result-screen__character[data-video-fade='slow'] .result-screen__video,
+.result-screen__character[data-video-fade='slow'] .result-screen__character-img {
+  transition: opacity 400ms ease-in-out;
+}
+.result-screen__character[data-video-fade='instant'] .result-screen__video {
+  transition: none;
+}
+
+/* Azul Personagem page (video): the page carries the display background so the blend has something to blend with. In light mode
+   the black baked background can't be hidden, so this page is solid black with a plain (unblended) video, white page dots and a
+   black bottom fade. */
+.result-screen__page[data-azul-video] {
+  background: var(--surface);
+  transition: background-color 400ms ease-in-out;
+}
+[data-mode='light'] .result-screen__page[data-azul-video] {
+  background: #000;
+}
+[data-mode='light'] .result-screen__page[data-azul-video] .result-screen__video {
+  mix-blend-mode: normal;
+}
+[data-mode='light'] .result-screen__page[data-azul-video] .result-screen__fade {
+  background: linear-gradient(to bottom, transparent, #000);
+}
+[data-mode='light'] .result-screen[data-azul-video][data-view='personagem'] .page-dots--result .page-dots__dot {
+  background: #fff;
+}
+
 .result-screen__character-img[data-active] {
   opacity: 1;
 }

@@ -8,6 +8,7 @@ import ResultScreen from './ResultScreen.jsx'
 import { pickRandomResult } from '../../mocks/voiceResults.js'
 import { FIGMA_LENGTHS } from '../../components/voiceSpokes.js'
 import { createVoiceSimulator } from '../../voiceSim.js'
+import { preloadAzulVideo } from '../../characters.js'
 import { speakResult, cancelSpeech } from '../../speech.js'
 import { saveToHistory } from '../../history.js'
 import { run, dur, prefersReducedMotion } from '../../motion.js'
@@ -150,6 +151,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
         break
       }
       case 'sending': {
+        preloadAzulVideo() // the Azul character's video loads while the thinking animation plays
         const from = [...lengths.current]
         const SHRINK_MS = 300
         if (!prefersReducedMotion()) {

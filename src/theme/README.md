@@ -28,3 +28,8 @@ The Result (`screens/voice/ResultScreen.jsx`) is a two-page horizontal carousel:
 `src/assets/characters/`, crossfading 400ms on a theme change) and Texto. Swipe by drag or horizontal wheel/trackpad; the page dots
 (mode tokens) and the check button (`--ok-bg` = the theme's main color, `--ok-fg` dark) are fixed. `characters.js` holds the shared
 PNG imports and the per-theme rest-circle framing; Figma designs the Result framing only for Laranja, the other themes are mapped from it.
+
+The Azul character also has a looping video (`src/assets/characters/azul.mp4`, H.264, no audio): on the Result's Personagem view in the
+Azul theme a single `<video>` plays over the PNG (preloaded while the thinking animation plays, paused while the page is out of
+view, released on check or when leaving Azul). Dark mode merges its black background with `mix-blend-mode: lighten`; light mode
+uses a solid black page for that view only. Reduced motion shows the PNG.

@@ -4,9 +4,9 @@ import { useDragScroll } from '../../hooks/useDragScroll.js'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import PageDots from '../../components/PageDots.jsx'
 import { useTheme } from '../../theme/theme.js'
-import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME } from '../../characters.js'
+import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME, AZUL_VIDEO, azulVideoUrl } from '../../characters.js'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
-import { run, dur, SNAP_MS } from '../../motion.js'
+import { run, dur, SNAP_MS, prefersReducedMotion } from '../../motion.js'
 import { FLICK_V, FLICK_MIN, lockDirection, velocity } from '../../gestures.js'
 import './voice.css'
 
@@ -42,10 +42,77 @@ const BOX = Object.fromEntries(
   }),
 )
 
-function CharacterView() {
-  const [theme] = useTheme()
+// The Azul video (1080px square) is fitted so the character is as large and as centered as the PNG's: scaled up a little about
+// the top of the head and shifted (measured on the silhouettes of azul.png and of 25 frames of the video: head top, centre and width;
+// the character sways about 3% to each side during the loop, so the match is on average).
+const VIDEO_FIT = { scale: 1.056, dx: -32.6 / 1080, dy: -48 / 1080 }
+const VIDEO_BOX = (() => {
+  const b = BOX.azul
+  return { left: b.left + VIDEO_FIT.dx * b.width, top: b.top + VIDEO_FIT.dy * b.height, width: b.width * VIDEO_FIT.scale, height: b.height * VIDEO_FIT.scale }
+})()
+const REDUCED = prefersReducedMotion()
+export const AZUL_VIDEO_ON = !!AZUL_VIDEO && !REDUCED // reduced motion: no video, the PNG ("poster") only
+
+// One <video> (Azul theme only). It plays while its page is in view (`paused` false) and is never restarted by pausing.
+// `onPlaying` tells the parent that the first frame is on screen, so the PNG can hand over to it.
+function AzulVideo({ paused, frozen, onPlaying, fading }) {
+  const ref = useRef(null)
+  const [src] = useState(azulVideoUrl) // the preloaded blob URL, or the file URL
+  const startPaused = useRef(paused)
+  useEffect(() => {
+    const v = ref.current
+    v.muted = true
+    return () => {
+      v.pause()
+      v.removeAttribute('src') // releases the decoder and the buffered frames
+      v.load()
+    }
+  }, [])
+  useEffect(() => {
+    const v = ref.current
+    if (paused || frozen) v.pause()
+    else v.play().catch(() => {}) // a refused play() leaves the PNG on screen
+  }, [paused, frozen])
   return (
-    <div className="result-screen__character">
+    <video
+      ref={ref}
+      className="result-screen__video"
+      src={src}
+      poster={CHARACTER_SRC.azul}
+      autoPlay={!startPaused.current}
+      muted
+      loop
+      playsInline
+      preload="auto"
+      width={Math.round(VIDEO_BOX.width)}
+      height={Math.round(VIDEO_BOX.height)}
+      style={VIDEO_BOX}
+      data-ready={fading ? undefined : ''}
+      onPlaying={onPlaying}
+    />
+  )
+}
+
+function CharacterView({ videoPaused, frozen }) {
+  const [theme] = useTheme()
+  const first = useRef(theme)
+  const switched = useRef(false) // the theme changed while this view was open: crossfade the video (400ms); at opening it hands over at once
+  if (theme !== first.current) switched.current = true
+  const isAzul = theme === 'azul' && AZUL_VIDEO_ON
+  const [mounted, setMounted] = useState(isAzul) // the video element lives from entering Azul until 450ms after leaving it
+  const [playing, setPlaying] = useState(false)
+  useEffect(() => {
+    if (isAzul) {
+      setMounted(true)
+      return undefined
+    }
+    setPlaying(false)
+    const id = setTimeout(() => setMounted(false), 450) // lets the video fade out, then releases it
+    return () => clearTimeout(id)
+  }, [isAzul])
+  const videoOn = isAzul && mounted && playing
+  return (
+    <div className="result-screen__character" data-video-fade={switched.current ? 'slow' : 'instant'}>
       {CHARACTER_IDS.map((id) =>
         CHARACTER_SRC[id] ? (
           <img
@@ -59,11 +126,12 @@ function CharacterView() {
             height={Math.round(BOX[id].height)}
             style={BOX[id]}
             data-id={id}
-            data-active={theme === id ? '' : undefined}
+            data-active={theme === id && !(id === 'azul' && videoOn) ? '' : undefined}
             onLoad={checkSize}
           />
         ) : null,
       )}
+      {mounted && <AzulVideo paused={videoPaused} frozen={frozen} fading={!isAzul || !playing} onPlaying={() => setPlaying(true)} />}
       <div className="result-screen__fade" />
     </div>
   )
@@ -99,6 +167,10 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
   const drag = useRef(null)
   const busy = useRef(false)
   const alive = useRef(true)
+  const [theme] = useTheme()
+  const azulVideo = theme === 'azul' && AZUL_VIDEO_ON // the Azul Personagem page is the video page
+  const [videoPaused, setVideoPaused] = useState(initialView === 'texto') // paused while the Personagem page is out of view
+  const [frozen, setFrozen] = useState(false) // the check was pressed: stop everything
 
   const setX = (x) => {
     if (trackRef.current) trackRef.current.style.transform = `translate3d(${x}px,0,0)`
@@ -118,12 +190,14 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
     const toX = -target * W
     indexRef.current = target
     setIndex(target)
+    if (target === 0) setVideoPaused(false)
     const { anim, done } = run(trackRef.current, [{ transform: `translate3d(${fromX}px,0,0)` }, { transform: `translate3d(${toX}px,0,0)` }], { duration: dur(SNAP_MS), easing: 'ease-out', fill: 'forwards' })
     await done
     if (!alive.current) return
     setX(toX)
     anim.cancel()
     busy.current = false
+    if (target === 1) setVideoPaused(true) // the Personagem page has left the view: pause (resumes where it was)
   }
 
   // Soft resistance (35%) when dragging past the first or last page.
@@ -144,7 +218,10 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
     d.samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY })
     if (!d.lock) {
       d.lock = lockDirection(d.dx, e.clientY - d.y0) // same rule as the text's vertical drag scroll, so they never both act
-      if (d.lock === 'h') e.currentTarget.setPointerCapture(e.pointerId)
+      if (d.lock === 'h') {
+        e.currentTarget.setPointerCapture(e.pointerId)
+        setVideoPaused(false) // the Personagem page starts to appear
+      }
     }
     if (d.lock === 'h') setX(baseX() + rubber(d.dx))
   }
@@ -193,11 +270,11 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div ref={rootRef} className="voice-screen result-screen" data-view={index === 1 ? 'texto' : 'personagem'}>
+    <div ref={rootRef} className="voice-screen result-screen" data-view={index === 1 ? 'texto' : 'personagem'} data-azul-video={azulVideo ? '' : undefined}>
       <div className="result-screen__viewport" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <div ref={trackRef} className="result-screen__track">
-          <div className="result-screen__page" style={{ left: 0 }}>
-            <CharacterView />
+          <div className="result-screen__page" style={{ left: 0 }} data-azul-video={azulVideo ? '' : undefined}>
+            <CharacterView videoPaused={videoPaused} frozen={frozen} />
           </div>
           <div className="result-screen__page" style={{ left: W }}>
             <TextView result={result} />
@@ -205,7 +282,10 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
         </div>
       </div>
       <PageDots className="page-dots--result" active={index} count={PAGES} />
-      <WidgetHit label="Concluir" className="result-screen__check" onActivate={() => onCheck?.()}>
+      <WidgetHit label="Concluir" className="result-screen__check" onActivate={() => {
+          setFrozen(true)
+          onCheck?.()
+        }}>
         <Check size={56} weight="regular" color="currentColor" />
       </WidgetHit>
     </div>
