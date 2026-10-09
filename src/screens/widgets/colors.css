@@ -15,10 +15,6 @@
   cursor: pointer;
 }
 
-.colors-screen__circle--preto {
-  border: 1px solid #676665; /* the faint edge of the dark circle in Figma */
-}
-
 .colors-screen__circle--selected {
   border: 5px solid var(--on-surface);
 }

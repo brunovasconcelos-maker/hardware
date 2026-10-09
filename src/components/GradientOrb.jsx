@@ -28,7 +28,7 @@ const EMPTY = []
 const blurFor = (size) => Math.min(60, Math.max(40, size * 0.085))
 
 // Circular gradient surface: a base color and stacked CSS gradient layers (first = top). Nothing in it animates: each layer is
-// its own element at a fixed resting scale inside the clipped circle. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (theme accent, and Verde's depth/sun).
+// its own element at a fixed resting scale inside the clipped circle. A static grain overlay shows when the theme's `grain` token is on. `glows` ([{ at, size, color, hold? }], first = top; `hold` keeps the color solid up to that % of the radius) are extra soft glows on top of all layers (the theme's depth regions and accent; they are not scaled, so their sizes are the ones in themes.js).
 // Resting scale of each layer (blob = radial glow, cover = opaque linear layer), cycling over three variants so neighboring
 // layers are not identical. This is the neutral pose the former drift animation started its loop from.
 const REST_SCALE = { blob: [1.05, 1.3, 1.4], cover: [1.25, 1.4, 1.3] }
@@ -40,16 +40,16 @@ const OrbLayers = memo(function OrbLayers({ layers, glows, bx }) {
   // bottom-most glow first, so the first glow ends up on top; the last glow (the accent) is numbered right after the layers
   for (let k = glows.length - 1; k >= 0; k--) {
     const g = glows[k]
-    drawn.unshift({ layer: { type: 'radial', at: g.at, size: g.size, stops: g.hold ? [[g.color, '0%'], [g.color, `${g.hold}%`], ['transparent', '100%']] : [[g.color, '0%'], ['transparent', '100%']] }, i: layers.length + glows.length - 1 - k })
+    drawn.unshift({ glow: true, layer: { type: 'radial', at: g.at, size: g.size, stops: g.hold ? [[g.color, '0%'], [g.color, `${g.hold}%`], ['transparent', '100%']] : [[g.color, '0%'], ['transparent', '100%']] }, i: layers.length + glows.length - 1 - k })
   }
   return (
     <div className="gradient-orb__glow" style={{ inset: `${-((bx - 1) / 2) * 100}%` }}>
       {/* first layer = top, so paint the array in reverse DOM order */}
-      {[...drawn].reverse().map(({ layer, i }) => (
+      {[...drawn].reverse().map(({ layer, i, glow }) => (
         <div
           key={i}
           className="gradient-orb__layer"
-          style={{ background: buildLayer(layer, bx), transform: `scale(${REST_SCALE[layer.type === 'linear' ? 'cover' : 'blob'][i % 3]})` }}
+          style={{ background: buildLayer(layer, bx), transform: glow ? undefined : `scale(${REST_SCALE[layer.type === 'linear' ? 'cover' : 'blob'][i % 3]})` }}
         />
       ))}
     </div>

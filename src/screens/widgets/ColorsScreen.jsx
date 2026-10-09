@@ -1,20 +1,13 @@
 import { X, CheckCircle } from '@phosphor-icons/react'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import { useTheme } from '../../theme/theme.js'
-import { THEMES } from '../../theme/themes.js'
+import { THEMES, THEME_ORDER } from '../../theme/themes.js'
 import '../screens.css'
 import './colors.css'
 
-// Circles from Figma 223:3078 (180px, positions on the 650px canvas). `theme` = the color theme it selects. (The slot at the
-// left held a grey placeholder for a future theme; Laranja took it.)
-const CIRCLES = [
-  { key: 'offwhite', theme: 'offwhite', left: 135, top: 55 },
-  { key: 'preto', theme: 'preto', left: 339, top: 55 },
-  { key: 'laranja', theme: 'laranja', left: 31, top: 235 },
-  { key: 'colorido', theme: 'colorido', left: 235, top: 235 },
-  { key: 'verde', theme: 'verde', left: 135, top: 415 },
-  { key: 'roxo', theme: 'roxo', left: 339, top: 415 },
-]
+// Four 180px circles in a symmetrical 2x2 arrangement centered in the display (24px gap), in the order of the side selector
+// (Roxo, Azul / Verde, Laranja). The X stays at the right edge, as in Figma 223:3078.
+const CIRCLES = THEME_ORDER.map((theme, i) => ({ key: theme, theme, left: 133 + (i % 2) * 204, top: 133 + Math.floor(i / 2) * 204 }))
 
 // Cores. Same theme state as the side selector: clicking a circle switches the theme (crossfade) and moves the selected
 // state (white outline + check in the center). Stage animates the screen in and out; the X calls `onClose`.

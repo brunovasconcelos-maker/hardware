@@ -2,17 +2,14 @@
 
 Every color on top of or inside a gradient comes from a theme token. Do not hardcode colors there.
 
-- **Orb colors**: define a new gradient in `orbs.js` (composition with color *slots*, plus its Colorido colors), then use
-  `<GradientOrb {...orbProps('myOrb')} />`. Give it a widget group in `GROUP_OF` / `TONES` (`themes.js`) so the
-  monochrome themes get a tone combination.
-- **Foreground on gradients** (text, icons, rings, hands, page dots): `color: var(--fg)` or `currentColor` /
-  `fill="currentColor"` inside a `GradientOrb` (its content already sets `color: var(--fg)`). Inverse: `var(--fg-contrast)`.
-- **Result OK button**: `var(--ok-bg)` / `var(--ok-fg)`.
-- **Accent glow**: every orb gets an extra soft glow in `--accent` (one color per monochrome theme, transparent in Colorido). It is added by `orbProps()`; a new orb only needs its widget group in `GROUP_OF`/`ACCENT_GLOWS` (`themes.js`) so the glow position varies per group (keep the disc at 15–25% of the orb area).
-- **Softness**: `GradientOrb` blurs its layers (40–60px) in an oversized wrapper clipped by the circle, so edges never fade; no per-theme work needed.
-- **Grain**: a theme token `grain: true|false` (default false). When true, every `GradientOrb` shows a static feTurbulence grain overlay on top of the drifting gradient; only Verde enables it.
-- **Verde, Roxo, Off white, Preto and Laranja** use roles instead of the 100–700 scale (see `VERDE` in `themes.js`): green base tones per orb slot, plus two extra glow layers on the orbs that define them, `--depth` (navy) and `--sun` (yellow), via `DEPTH_GLOWS` / `SUN_GLOWS`. Both tokens are transparent in every other theme.
-- Stays the same in every theme: the dark display background (`#141515`) and text/icons outside gradients (Homepage,
-  Menu, voice-mode lines, Result text).
-- Themes: Colorido (default, the original design) and five monochrome palettes (`PALETTES`, 100 lightest … 700 darkest).
-  Switching sets CSS variables registered as `<color>` on `<html>`, so the browser crossfades them (400ms).
+- **Themes** (`themes.js`): Roxo (default), Azul, Verde, Laranja. Each is built from roles: base tones per orb slot (a tone
+  *ramp* A–E for Roxo/Azul/Verde, filled into the `TEMPLATES` compositions; explicit arrays for Laranja), soft **depth** regions
+  (`--depth`, and `--depth-2` in Azul), and an **accent** glow (`--sun`; Laranja also has `--sun-alt`, used by the orbs in
+  `GOLD_ORBS`). The foreground on gradients is white; the grain overlay is on in all four (`grain` token).
+- **Orb colors**: define a new gradient in `orbs.js` (composition with color *slots*), add its slot letters to `TEMPLATES` (and an
+  array to `LARANJA_COLORS`), its glow positions to `DEPTH_GLOWS` / `SUN_GLOWS`, and use `orbProps('<orb>')` in `<GradientOrb>`.
+- **Foreground on gradients** (text, icons, rings, hands, page dots): `color: var(--fg)` or `currentColor`; inverse `var(--fg-contrast)`.
+- **OK button**: `--ok-bg` (the theme's main color) and `--ok-fg`.
+- **Surfaces** (display background, text on it, Menu...) follow the light/dark *mode* (`mode.js`), not the color theme.
+- Gradients are static (no drift animation). Switching themes morphs the registered color variables (600ms) only for the orbs
+  that are visible; the saved theme is in `localStorage` (`hardware.theme`), unknown values fall back to the default (Roxo).

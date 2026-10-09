@@ -1,6 +1,5 @@
-// GENERATED from the original Colorido gradients: each orb's composition (positions, sizes, angles, stops) with colors
-// replaced by slot indices. Slot 0 is the orb's base color. 'transparent' stops fade a radial layer out.
-// The Colorido palette (the original colors, per slot) is at the bottom; other themes map their own tones onto the slots.
+// Each orb's composition (positions, sizes, angles, stops) with colors replaced by slot indices. Slot 0 is the orb's base
+// color. 'transparent' stops fade a radial layer out. The themes (themes.js) give every slot its color.
 export const ORBS = {
   mic: {
     layers: [
@@ -122,22 +121,4 @@ export const ORBS = {
       {type:'linear',angle:'202deg',stops:[[0,'0%'],[4,'30%'],[5,'45%'],[6,'62%'],[7,'78%'],[8,'100%']]},
     ],
   },
-}
-
-export const COLORIDO_COLORS = {
-  mic: ['#9ba389','#8a06d6','#c0c870','#566a6c','#8f12cf','#9a50b8','#a2b392','#aec598'],
-  tasks: ['#5a12b0','#6a1347','#8038cc','#2a0060','#4a0aa4','#6a1cc0','#b4147a','#d41a5e'],
-  weather: ['#cc9aa6','#f2e6cc','#d4663c','#c24ac8','#c07cc4','#d27a8e'],
-  usage: ['#8a6a9a','#34c070','#3ec27a','#5a9a74','#6a0b3a','#6a0d3c','#9a78b8','#ece4f1','#cdbad6','#c9b4d2'],
-  calendar: ['#de4cae','#dc3fb4','#eaa6b8','#df6192'],
-  battery: ['#2a60dc','#86d0e4','#6a98e6','#0511d6','#0a1ed9','#2f66dc','#4ea6dd','#3a8cdc'],
-  clock: ['#6f3aa6','#b04a90','#3a34b0','#9fb0ea','#e2c4ee','#4a2a8c','#7a34b0','#8c5cc4','#a98fd6'],
-  tasksFull: ['#6a0cc0','#2c0068','#330075','#5509b8','#7c0bb1','#b00d78','#cf0f5a'],
-  weatherFull: ['#cc8a78','#e8dc9c','#d4623e','#c24ac8','#c890c8','#d25d8b','#cbb69d'],
-  usageWeekly: ['#8a6a9a','#3fc078','#55b07c','#6a0b3a','#6a0d3c','#9a78b8','#e6dcec','#c4acd8','#c8b0d4'],
-  usageDaily: ['#cf37c4','#3f48d4','#e0143f','#e88cdc','#a63bd0','#b0a4d8','#bd77d9','#d9269f','#de2887'],
-  batteryFull: ['#3a74dc','#7ad0dd','#68a0de','#2263de','#0511d9','#1330db','#5db5de','#45a6de'],
-  calendarFull: ['#de4cae','#e2d3c0','#dd8aab','#e0558c','#d878c0'],
-  clockFull: ['#7a30a8','#b03a82','#3a34b8','#94a4e8','#d7b0e2','#542a8c','#7b3bb2','#8e6cd0','#a590dc'],
-  digital: ['#0d1451','#cfe0e2','#ecd48e','#cdb9cc','#0d1551','#29376b','#7a91b6','#b5bfdd','#d2c6cf'],
 }
