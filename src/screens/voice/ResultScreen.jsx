@@ -64,6 +64,7 @@ function CharacterView() {
           />
         ) : null,
       )}
+      <div className="result-screen__fade" />
     </div>
   )
 }
