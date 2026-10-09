@@ -5,13 +5,12 @@ import WidgetHit from '../components/WidgetHit.jsx'
 import WidgetViewer from '../components/WidgetViewer.jsx'
 import TasksWidget from '../components/widgets/TasksWidget.jsx'
 import WeatherWidget from '../components/widgets/WeatherWidget.jsx'
-import UsageWidget from '../components/widgets/UsageWidget.jsx'
+import RecordingWidget from '../components/widgets/RecordingWidget.jsx'
 import CalendarWidget from '../components/widgets/CalendarWidget.jsx'
 import BatteryWidget from '../components/widgets/BatteryWidget.jsx'
 import ClockWidget from '../components/widgets/ClockWidget.jsx'
 import { WIDGET_VIEWS } from './widgetViews.jsx'
 import { useClockStyle } from '../hooks/useClockStyle.js'
-import { useUsageMode, USAGE_DATA } from '../hooks/useUsageMode.js'
 import { run, dur, OPEN_MS } from '../motion.js'
 import { ORBIT_ANGLES } from '../orbit.js'
 import './RestScreen.css'
@@ -24,7 +23,6 @@ const DISPLAY = 650
 // covered (`covered`, or a widget fully open) the orbit is paused too; it resumes from where it stopped.
 export default function RestScreen({ orbitPaused = false, covered = false, onMicClick }) {
   const [clockStyle, setClockStyle] = useClockStyle()
-  const [usageMode, setUsageMode] = useUsageMode()
   const [open, setOpen] = useState(null) // { key, from: {dx, dy, scale}, phase: 'opening' | 'open' | 'closing' }
   const rootRef = useRef(null)
   const overlayRef = useRef(null)
@@ -68,7 +66,6 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
   // Closing: reverse of the opening, starting from wherever the drag left the view.
   const closeWidget = async ({ dy, index }) => {
     if (open.key === 'clock') setClockStyle(index === 0 ? 'a' : 'b')
-    if (open.key === 'usage') setUsageMode(index === 0 ? 'semanal' : 'diario')
     const from = open.from
     setOpen((o) => ({ ...o, phase: 'closing' }))
     const { done } = run(
@@ -88,7 +85,7 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
   const widgets = [
     { key: 'tasks', angle: ORBIT_ANGLES.tasks, node: <TasksWidget /> },
     { key: 'weather', angle: ORBIT_ANGLES.weather, node: <WeatherWidget /> },
-    { key: 'usage', angle: ORBIT_ANGLES.usage, node: <UsageWidget {...USAGE_DATA[usageMode]} /> },
+    { key: 'recording', angle: ORBIT_ANGLES.recording, node: <RecordingWidget /> },
     { key: 'calendar', angle: ORBIT_ANGLES.calendar, node: <CalendarWidget /> },
     { key: 'battery', angle: ORBIT_ANGLES.battery, node: <BatteryWidget /> },
     { key: 'clock', angle: ORBIT_ANGLES.clock, node: <ClockWidget style={clockStyle} /> },
@@ -126,7 +123,7 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
         <div ref={overlayRef} className="rest-screen__overlay" data-phase={open.phase}>
           <WidgetViewer
             pageCount={view.pageCount}
-            initialIndex={open.key === 'clock' ? (clockStyle === 'b' ? 1 : 0) : open.key === 'usage' ? (usageMode === 'diario' ? 1 : 0) : 0}
+            initialIndex={open.key === 'clock' ? (clockStyle === 'b' ? 1 : 0) : 0}
             renderPage={view.renderPage}
             disabled={open.phase !== 'open'}
             onClose={closeWidget}

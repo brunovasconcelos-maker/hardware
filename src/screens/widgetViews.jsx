@@ -2,8 +2,7 @@ import TarefasScreen from './widgets/TarefasScreen.jsx'
 import ClimaScreen from './widgets/ClimaScreen.jsx'
 import BateriaScreen from './widgets/BateriaScreen.jsx'
 import WifiScreen from './widgets/WifiScreen.jsx'
-import UsageSemanalScreen from './widgets/UsageSemanalScreen.jsx'
-import UsageDiarioScreen from './widgets/UsageDiarioScreen.jsx'
+import GravacaoScreen from './recording/GravacaoScreen.jsx'
 import CalendarioScreen from './widgets/CalendarioScreen.jsx'
 import HoraAScreen from './widgets/HoraAScreen.jsx'
 import HoraBScreen from './widgets/HoraBScreen.jsx'
@@ -25,11 +24,7 @@ export const WIDGET_VIEWS = {
     pageCount: 2,
     renderPage: (i) => (i === 0 ? <BateriaScreen showDots={false} /> : <WifiScreen showDots={false} />),
   },
-  usage: {
-    label: 'Uso',
-    pageCount: 2,
-    renderPage: (i) => (i === 0 ? <UsageSemanalScreen showDots={false} /> : <UsageDiarioScreen showDots={false} />),
-  },
+  recording: { label: 'Gravação', pageCount: 1, renderPage: () => <GravacaoScreen /> },
   clock: {
     label: 'Hora',
     pageCount: 2,

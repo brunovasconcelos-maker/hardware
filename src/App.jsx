@@ -3,6 +3,9 @@ import Stage from './pages/Stage.jsx'
 import SideControls from './components/SideControls.jsx'
 import ScreenPreview from './pages/ScreenPreview.jsx'
 import { VoiceIdlePreview, VoiceRecordingPreview, VoiceThinkingPreview, VoiceResultPreview } from './pages/VoicePreview.jsx'
+import GravacaoScreen from './screens/recording/GravacaoScreen.jsx'
+import GravandoScreen from './screens/recording/GravandoScreen.jsx'
+import PausadoScreen from './screens/recording/PausadoScreen.jsx'
 import WidgetViewer from './components/WidgetViewer.jsx'
 import { WIDGET_VIEWS } from './screens/widgetViews.jsx'
 
@@ -12,8 +15,6 @@ const PREVIEW_ROUTES = [
   ['/widget/bateria', 'battery', 0],
   ['/widget/wifi', 'battery', 1],
   ['/widget/tarefas', 'tasks', 0],
-  ['/widget/usage-semanal', 'usage', 0],
-  ['/widget/usage-diario', 'usage', 1],
   ['/widget/clima', 'weather', 0],
   ['/widget/calendario', 'calendar', 0],
   ['/widget/hora-a', 'clock', 0],
@@ -39,6 +40,9 @@ export default function App() {
             }
           />
         ))}
+        <Route path="/widget/gravacao" element={<ScreenPreview><GravacaoScreen /></ScreenPreview>} />
+        <Route path="/widget/gravacao/gravando" element={<ScreenPreview><GravandoScreen /></ScreenPreview>} />
+        <Route path="/widget/gravacao/pausado" element={<ScreenPreview><PausadoScreen /></ScreenPreview>} />
         <Route path="/voz/idle" element={<VoiceIdlePreview />} />
         <Route path="/voz/gravando" element={<VoiceRecordingPreview />} />
         <Route path="/voz/pensando" element={<VoiceThinkingPreview />} />

@@ -1,0 +1,78 @@
+/* Gravação screens (Figma coordinates on a 650x650 canvas). Texts sit on the display background: mode tokens. */
+.recording-screen {
+  color: var(--on-surface);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Tela 1 */
+.recording-start__group {
+  position: absolute;
+  left: 141px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 368px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+.recording-start__icon {
+  flex: none;
+  width: 120px;
+  height: 120px;
+}
+.recording-start__text {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Timer (Tela 2 and 3): Inter Medium 48, tracking -1.92px, tabular figures so the digits don't jiggle */
+.recording-timer {
+  position: absolute;
+  left: 50%;
+  top: 48px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -1.92px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Buttons: the theme's main color with dark content (as the Result check), or the display's inverse (white in dark mode) */
+.recording-button {
+  position: absolute;
+  top: 510px;
+  box-sizing: border-box;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 360px;
+  cursor: pointer;
+}
+.recording-button--theme {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+}
+.recording-button--inverse {
+  background: var(--on-surface);
+  color: var(--surface);
+}
+.recording-button--pill {
+  padding: 9px 32px;
+  font-size: 32px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.recording-button--round {
+  width: 100px;
+  padding: 9px;
+}

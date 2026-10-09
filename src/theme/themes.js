@@ -11,9 +11,7 @@
 export const DEPTH_GLOWS = {
   mic: { at: '42% 40%', size: '28%' },
   tasks: { at: '58% 40%', size: '28%' },
-  usage: { at: '40% 58%', size: '28%' },
-  usageWeekly: { at: '42% 42%', size: '28%' },
-  usageDaily: { at: '60% 56%', size: '28%' },
+  recording: { at: '40% 58%', size: '28%' },
   calendar: { at: '56% 60%', size: '28%' },
   calendarFull: { at: '40% 44%', size: '28%' },
   battery: { at: '60% 42%', size: '28%' },
@@ -28,8 +26,7 @@ export const DEPTH_GLOWS = {
 // Azul's second depth (vivid blue, `--depth-2`): a smaller disc (~20% of the area) on the other side of the orb, on some orbs.
 export const DEPTH2_GLOWS = {
   mic: { at: '62% 60%', size: '20%' },
-  usage: { at: '62% 42%', size: '20%' },
-  usageDaily: { at: '40% 44%', size: '20%' },
+  recording: { at: '62% 42%', size: '20%' },
   calendar: { at: '44% 40%', size: '20%' },
   clock: { at: '58% 42%', size: '20%' },
   tasksFull: { at: '58% 40%', size: '20%' },
@@ -42,9 +39,7 @@ export const SUN_GLOWS = {
   tasksFull: { at: '80% 95%', size: '45%' },
   weather: { at: '15% 92%', size: '42%' },
   weatherFull: { at: '10% 95%', size: '50%' },
-  usage: { at: '62% 104%', size: '44%' },
-  usageWeekly: { at: '55% 108%', size: '48%' },
-  usageDaily: { at: '55% 108%', size: '48%' },
+  recording: { at: '62% 104%', size: '44%' },
   calendar: { at: '10% 15%', size: '37%' },
   calendarFull: { at: '12% 12%', size: '37%' },
   battery: { at: '50% 102%', size: '41%' },
@@ -52,23 +47,21 @@ export const SUN_GLOWS = {
   clock: { at: '95% 88%', size: '41%' },
 }
 // Laranja only: orbs whose accent is gold; every other orb with an accent glow gets lime.
-export const GOLD_ORBS = new Set(['tasks', 'tasksFull', 'weather', 'weatherFull', 'usage', 'usageWeekly', 'usageDaily', 'calendar', 'calendarFull', 'clock'])
+export const GOLD_ORBS = new Set(['tasks', 'tasksFull', 'weather', 'weatherFull', 'recording', 'calendar', 'calendarFull', 'clock'])
 
 // Orb compositions as tone letters, one per layer slot (slot 0 = the orb's base color; the slot order/positions are in orbs.js).
 // A = darkest base tone … E = lightest. The light orbs (mic, weather, battery) carry large light areas; the text, icons and
-// rings sit over the depth region or a darker tone. Tasks and usage are mid, calendar and the clocks darker.
+// rings sit over the depth region or a darker tone. Tasks and recording are mid, calendar and the clocks darker.
 const TEMPLATES = {
   mic: 'ECEDBEEC',
   tasks: 'BABABBAA',
   weather: 'DADCBA',
-  usage: 'BBBBAACCBB',
+  recording: 'BBBBAACCBB',
   calendar: 'ABAB',
   battery: 'DEDDEBCC',
   clock: 'AABABBAAB',
   tasksFull: 'BABBBAA',
   weatherFull: 'DADBDAB',
-  usageWeekly: 'BBBAACCBB',
-  usageDaily: 'BBBCBAAAB',
   batteryFull: 'CABABBAA',
   calendarFull: 'ABABA',
   clockFull: 'AABABBAAB',
@@ -82,7 +75,7 @@ export const ROXO = {
   depth: '#6B0B41',
   sun: '#FC7B89',
 }
-// Azul has three bases and all of them are light, so white would not be readable on the dark-leaning orbs (tasks, usage, calendar,
+// Azul has three bases and all of them are light, so white would not be readable on the dark-leaning orbs (tasks, recording, calendar,
 // clocks): its darkest ramp tone is the steel depth tone #2E5F7A (used as a base there, beyond its soft-region role) and the
 // second depth (vivid blue) adds variety.
 export const AZUL = {
@@ -99,7 +92,7 @@ export const VERDE = {
   sun: '#F6EE45',
 }
 // Laranja: explicit compositions so the palette is spread out: light pink leads the mic, weather and battery; red leads tasks
-// and calendar (and a band in usage); the rest is orange. Wherever pink is a large light area, the text/icons sit over the
+// and calendar (and a band in recording); the rest is orange. Wherever pink is a large light area, the text/icons sit over the
 // depth region or orange. Two accents, one per orb: lime or gold (GOLD_ORBS).
 export const LARANJA = {
   main: '#EB684A', // selector swatch
@@ -115,14 +108,12 @@ const LARANJA_COLORS = {
   mic: [P, O, P, P, O, P, P, O], // pink (the lime glow sits on it) + orange
   tasks: [R, O, R, O, R, R, O, O], // red + orange · gold
   weather: [P, O, P, O, P, O], // pink sides, orange behind the cloud and under the text · gold
-  usage: [O, O, O, O, O, O, R, R, O, O], // orange with a red band · gold
+  recording: [O, O, O, O, O, O, R, R, O, O], // orange with a red band · gold
   calendar: [R, O, R, O], // red + orange · gold
   battery: [P, P, P, P, P, P, P, P], // pink (the lime glow sits on it)
   clock: [O, O, R, O, O, O, O, O, O], // orange with a touch of red · gold
   tasksFull: [R, O, R, R, O, O, O],
   weatherFull: [P, O, P, O, P, O, O],
-  usageWeekly: [O, O, O, O, O, R, R, O, O],
-  usageDaily: [O, O, O, O, O, O, O, R, O],
   batteryFull: [P, O, O, O, O, O, O, O], // orange (the ring), with a soft pink sheen along the diagonal
   calendarFull: [R, O, R, O, R],
   clockFull: [O, O, R, O, O, O, O, O, O],

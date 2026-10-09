@@ -1,0 +1,40 @@
+.waveform {
+  position: absolute;
+  inset: 0;
+  contain: layout paint;
+  pointer-events: none;
+}
+
+/* Past bars/dots (white, mode token) and future dots (the same at 50%). Each is placed by transform. */
+.waveform__el {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 20px;
+  background: var(--on-surface);
+}
+.waveform__el--ahead {
+  opacity: 0.5;
+}
+
+/* Playhead: the theme's main color, a 274px line with a 15px dot on top (Figma: dot at 310/182 for a line at 315/188). */
+.waveform__playhead {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 274px;
+  border-radius: 20px;
+  background: var(--ok-bg);
+}
+.waveform__playhead-dot {
+  position: absolute;
+  left: -5px;
+  top: -6px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--ok-bg);
+}

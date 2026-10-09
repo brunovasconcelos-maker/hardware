@@ -26,7 +26,7 @@ export const ORBS = {
       {type:'radial',at:'50% 105%',size:'55%',stops:[[5,'0%'],['transparent','100%']]},
     ],
   },
-  usage: {
+  recording: {
     layers: [
       {type:'radial',at:'5% 88%',size:'75%',stops:[[1,'0%'],[2,'45%'],['transparent','100%']]},
       {type:'radial',at:'70% 108%',size:'38%',stops:[[3,'0%'],['transparent','100%']]},
@@ -70,22 +70,6 @@ export const ORBS = {
       {type:'radial',at:'90% 12%',size:'34%',stops:[[4,'0%'],['transparent','100%']]},
       {type:'radial',at:'55% 100%',size:'40%',stops:[[5,'0%'],['transparent','100%']]},
       {type:'radial',at:'100% 90%',size:'34%',stops:[[6,'0%'],['transparent','100%']]},
-    ],
-  },
-  usageWeekly: {
-    layers: [
-      {type:'radial',at:'6% 84%',size:'58%',stops:[[1,'0%'],['transparent','100%']]},
-      {type:'radial',at:'52% 108%',size:'38%',stops:[[2,'0%'],['transparent','100%']]},
-      {type:'linear',angle:'206deg',stops:[[3,'0%'],[4,'36%'],[5,'46%'],[6,'56%'],[7,'72%'],[8,'100%']]},
-    ],
-  },
-  usageDaily: {
-    layers: [
-      {type:'radial',at:'2% 94%',size:'58%',stops:[[1,'0%'],['transparent','100%']]},
-      {type:'radial',at:'96% 104%',size:'54%',stops:[[2,'0%'],['transparent','100%']]},
-      {type:'radial',at:'42% 46%',size:'28%',stops:[[3,'0%'],['transparent','100%']]},
-      {type:'radial',at:'0% 46%',size:'34%',stops:[[4,'0%'],['transparent','100%']]},
-      {type:'linear',angle:'180deg',stops:[[5,'0%'],[6,'22%'],[0,'40%'],[7,'70%'],[8,'90%']]},
     ],
   },
   batteryFull: {
