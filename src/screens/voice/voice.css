@@ -63,23 +63,25 @@
   transition: none;
 }
 
-/* Azul Personagem page (video): the page carries the display background so the blend has something to blend with. In light mode
+/* Personagem page of a theme with a video (Azul, Roxo): the page carries the display background so the blend has something to blend with. In light mode
    the black baked background can't be hidden, so this page is solid black with a plain (unblended) video, white page dots and a
    black bottom fade. */
-.result-screen__page[data-azul-video] {
-  background: var(--surface);
+.result-screen__page {
   transition: background-color 400ms ease-in-out;
 }
-[data-mode='light'] .result-screen__page[data-azul-video] {
+.result-screen__page[data-char-video] {
+  background: var(--surface);
+}
+[data-mode='light'] .result-screen__page[data-char-video] {
   background: #000;
 }
-[data-mode='light'] .result-screen__page[data-azul-video] .result-screen__video {
+[data-mode='light'] .result-screen__page[data-char-video] .result-screen__video {
   mix-blend-mode: normal;
 }
-[data-mode='light'] .result-screen__page[data-azul-video] .result-screen__fade {
+[data-mode='light'] .result-screen__page[data-char-video] .result-screen__fade {
   background: linear-gradient(to bottom, transparent, #000);
 }
-[data-mode='light'] .result-screen[data-azul-video][data-view='personagem'] .page-dots--result .page-dots__dot {
+[data-mode='light'] .result-screen[data-char-video][data-view='personagem'] .page-dots--result .page-dots__dot {
   background: #fff;
 }
 

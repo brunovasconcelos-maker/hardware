@@ -4,7 +4,7 @@ import { useDragScroll } from '../../hooks/useDragScroll.js'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import PageDots from '../../components/PageDots.jsx'
 import { useTheme } from '../../theme/theme.js'
-import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME, AZUL_VIDEO, azulVideoUrl } from '../../characters.js'
+import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME, CHARACTER_VIDEOS, characterVideoUrl } from '../../characters.js'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
 import { run, dur, SNAP_MS, prefersReducedMotion } from '../../motion.js'
 import { FLICK_V, FLICK_MIN, lockDirection, velocity } from '../../gestures.js'
@@ -42,22 +42,27 @@ const BOX = Object.fromEntries(
   }),
 )
 
-// The Azul video (1080px square) is fitted so the character is as large and as centered as the PNG's: scaled up a little about
-// the top of the head and shifted (measured on the silhouettes of azul.png and of 25 frames of the video: head top, centre and width;
-// the character sways about 3% to each side during the loop, so the match is on average).
-const VIDEO_FIT = { scale: 1.056, dx: -32.6 / 1080, dy: -48 / 1080 }
-const VIDEO_BOX = (() => {
-  const b = BOX.azul
-  return { left: b.left + VIDEO_FIT.dx * b.width, top: b.top + VIDEO_FIT.dy * b.height, width: b.width * VIDEO_FIT.scale, height: b.height * VIDEO_FIT.scale }
-})()
+// A theme's video (1080px square) is fitted to that theme's PNG with its `fit` (see characters.js). The PNG is shown `cover` in its
+// box, so its square is as large as the box's longer side, centered on the box (Roxo's box is not square).
+const videoBox = (id) => {
+  const b = BOX[id]
+  const { scale, dx, dy } = CHARACTER_VIDEOS[id].fit
+  const side = Math.max(b.width, b.height)
+  const left0 = b.left + (b.width - side) / 2
+  const top0 = b.top + (b.height - side) / 2
+  return { left: left0 + dx * side, top: top0 + dy * side, width: side * scale, height: side * scale }
+}
 const REDUCED = prefersReducedMotion()
-export const AZUL_VIDEO_ON = !!AZUL_VIDEO && !REDUCED // reduced motion: no video, the PNG ("poster") only
+// The theme whose video plays on the Personagem page (reduced motion: none, the PNG "poster" only).
+export const videoThemeOf = (theme) => (!REDUCED && CHARACTER_VIDEOS[theme] ? theme : null)
+const FADE_MS = 450 // a bit over the 400ms opacity crossfade
 
-// One <video> (Azul theme only). It plays while its page is in view (`paused` false) and is never restarted by pausing.
-// `onPlaying` tells the parent that the first frame is on screen, so the PNG can hand over to it.
-function AzulVideo({ paused, frozen, onPlaying, fading }) {
-  const ref = useRef(null)
-  const [src] = useState(azulVideoUrl) // the preloaded blob URL, or the file URL
+// The single <video>. It holds the video of `theme`; it plays while its page is in view (`paused` false) and is never restarted
+// by pausing. `onPlaying` tells the parent that the first frame is on screen, so the PNG can hand over to it.
+function CharacterVideo({ theme, paused, frozen, ready, onPlaying, elRef }) {
+  const ref = elRef
+  const src = characterVideoUrl(theme) // the preloaded blob URL, or the file URL
+  const box = videoBox(theme)
   const startPaused = useRef(paused)
   useEffect(() => {
     const v = ref.current
@@ -72,22 +77,22 @@ function AzulVideo({ paused, frozen, onPlaying, fading }) {
     const v = ref.current
     if (paused || frozen) v.pause()
     else v.play().catch(() => {}) // a refused play() leaves the PNG on screen
-  }, [paused, frozen])
+  }, [paused, frozen, src])
   return (
     <video
       ref={ref}
       className="result-screen__video"
       src={src}
-      poster={CHARACTER_SRC.azul}
+      poster={CHARACTER_SRC[theme]}
       autoPlay={!startPaused.current}
       muted
       loop
       playsInline
       preload="auto"
-      width={Math.round(VIDEO_BOX.width)}
-      height={Math.round(VIDEO_BOX.height)}
-      style={VIDEO_BOX}
-      data-ready={fading ? undefined : ''}
+      width={Math.round(box.width)}
+      height={Math.round(box.height)}
+      style={box}
+      data-ready={ready ? '' : undefined}
       onPlaying={onPlaying}
     />
   )
@@ -95,22 +100,31 @@ function AzulVideo({ paused, frozen, onPlaying, fading }) {
 
 function CharacterView({ videoPaused, frozen }) {
   const [theme] = useTheme()
+  const wanted = videoThemeOf(theme) // the theme whose video should be on screen, if any
   const first = useRef(theme)
-  const switched = useRef(false) // the theme changed while this view was open: crossfade the video (400ms); at opening it hands over at once
+  const switched = useRef(false) // the theme changed while this view was open: crossfade (400ms); at opening it hands over at once
   if (theme !== first.current) switched.current = true
-  const isAzul = theme === 'azul' && AZUL_VIDEO_ON
-  const [mounted, setMounted] = useState(isAzul) // the video element lives from entering Azul until 450ms after leaving it
+  // The one <video> element holds `held` (the theme whose video it has loaded). A switch fades it out, then re-points or removes
+  // it, so two videos are never mounted together (Azul <-> Roxo goes through the new theme's PNG).
+  const [held, setHeld] = useState(wanted)
   const [playing, setPlaying] = useState(false)
+  const videoEl = useRef(null)
   useEffect(() => {
-    if (isAzul) {
-      setMounted(true)
+    if (wanted === held) {
+      // back to the held theme before its fade-out finished: the video never stopped, so no 'playing' event will come again
+      const v = videoEl.current
+      if (v && v.readyState >= 3) setPlaying(true)
       return undefined
     }
     setPlaying(false)
-    const id = setTimeout(() => setMounted(false), 450) // lets the video fade out, then releases it
+    if (held === null) {
+      setHeld(wanted)
+      return undefined
+    }
+    const id = setTimeout(() => setHeld(wanted), FADE_MS) // lets the video fade out first
     return () => clearTimeout(id)
-  }, [isAzul])
-  const videoOn = isAzul && mounted && playing
+  }, [wanted, held])
+  const videoOn = playing && held !== null && held === wanted
   return (
     <div className="result-screen__character" data-video-fade={switched.current ? 'slow' : 'instant'}>
       {CHARACTER_IDS.map((id) =>
@@ -126,12 +140,12 @@ function CharacterView({ videoPaused, frozen }) {
             height={Math.round(BOX[id].height)}
             style={BOX[id]}
             data-id={id}
-            data-active={theme === id && !(id === 'azul' && videoOn) ? '' : undefined}
+            data-active={theme === id && !(videoOn && held === id) ? '' : undefined}
             onLoad={checkSize}
           />
         ) : null,
       )}
-      {mounted && <AzulVideo paused={videoPaused} frozen={frozen} fading={!isAzul || !playing} onPlaying={() => setPlaying(true)} />}
+      {held !== null && <CharacterVideo theme={held} paused={videoPaused} frozen={frozen} ready={videoOn} onPlaying={() => setPlaying(true)} elRef={videoEl} />}
       <div className="result-screen__fade" />
     </div>
   )
@@ -168,7 +182,7 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
   const busy = useRef(false)
   const alive = useRef(true)
   const [theme] = useTheme()
-  const azulVideo = theme === 'azul' && AZUL_VIDEO_ON // the Azul Personagem page is the video page
+  const charVideo = videoThemeOf(theme) !== null // the Personagem page of a theme with a video
   const [videoPaused, setVideoPaused] = useState(initialView === 'texto') // paused while the Personagem page is out of view
   const [frozen, setFrozen] = useState(false) // the check was pressed: stop everything
 
@@ -270,10 +284,10 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div ref={rootRef} className="voice-screen result-screen" data-view={index === 1 ? 'texto' : 'personagem'} data-azul-video={azulVideo ? '' : undefined}>
+    <div ref={rootRef} className="voice-screen result-screen" data-view={index === 1 ? 'texto' : 'personagem'} data-char-video={charVideo ? '' : undefined}>
       <div className="result-screen__viewport" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <div ref={trackRef} className="result-screen__track">
-          <div className="result-screen__page" style={{ left: 0 }} data-azul-video={azulVideo ? '' : undefined}>
+          <div className="result-screen__page" style={{ left: 0 }} data-char-video={charVideo ? '' : undefined}>
             <CharacterView videoPaused={videoPaused} frozen={frozen} />
           </div>
           <div className="result-screen__page" style={{ left: W }}>

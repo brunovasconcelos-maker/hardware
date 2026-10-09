@@ -137,6 +137,8 @@ export function setTheme(id) {
   listeners.forEach((l) => l())
 }
 
+export const getTheme = () => current
+
 export function useTheme() {
   const id = useSyncExternalStore(
     (l) => {
