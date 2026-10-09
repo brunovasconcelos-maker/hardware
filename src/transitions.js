@@ -56,3 +56,14 @@ export function enter(root, { shared = false } = {}) {
   })
   return Promise.all(anims.map((a) => a.finished.catch(() => {}))).then(() => els.forEach((el) => (el.style.transformOrigin = '')))
 }
+
+// Swaps the content of a full-screen element in place (e.g. one screen of a flow for the next): the old content scales down and
+// fades out, `change()` must update the DOM synchronously (wrap the React state change in flushSync), then the new content scales
+// in from slightly larger and fades in. The element's own box is never faded away from the display (the background stays opaque).
+export async function swapContent(el, change) {
+  const out = el.animate([{ opacity: 1, scale: '1' }, { opacity: 0, scale: String(EXIT_SCALE) }], { duration: dur(EXIT_MS), easing: EASE, fill: 'forwards' })
+  await out.finished.catch(() => {})
+  change()
+  out.cancel()
+  await el.animate([{ opacity: 0, scale: String(ENTER_SCALE) }, { opacity: 1, scale: '1' }], { duration: dur(ENTER_MS), easing: EASE, fill: 'backwards' }).finished.catch(() => {})
+}

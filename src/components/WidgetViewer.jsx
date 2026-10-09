@@ -84,6 +84,7 @@ export default function WidgetViewer({ pageCount = 1, initialIndex = 0, renderPa
   function onPointerDown(e) {
     if (disabled || busy.current || drag.current) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
+    if (e.target.closest?.('[data-no-drag]')) return // buttons inside a page get their own clicks (no capture, no drag)
     e.preventDefault()
     syncOffscreen(true)
     e.currentTarget.setPointerCapture(e.pointerId)

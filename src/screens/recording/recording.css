@@ -76,3 +76,22 @@
   width: 100px;
   padding: 9px;
 }
+
+/* Live flow: a full-screen content wrapper (swapped between screens) and the controls layer (swapped Finalizar <-> play + check) */
+.recording-flow,
+.recording-flow__content,
+.recording-controls {
+  position: absolute;
+  inset: 0;
+}
+/* The outer layer is the opaque display background (it never fades or scales); only the content inside is swapped. */
+.recording-flow {
+  border-radius: 50%;
+  background: var(--surface);
+}
+.recording-controls {
+  pointer-events: none;
+}
+.recording-controls > * {
+  pointer-events: auto;
+}

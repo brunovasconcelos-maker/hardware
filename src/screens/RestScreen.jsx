@@ -10,6 +10,7 @@ import CalendarWidget from '../components/widgets/CalendarWidget.jsx'
 import BatteryWidget from '../components/widgets/BatteryWidget.jsx'
 import ClockWidget from '../components/widgets/ClockWidget.jsx'
 import { WIDGET_VIEWS } from './widgetViews.jsx'
+import RecordingFlow from './recording/RecordingFlow.jsx'
 import { useClockStyle } from '../hooks/useClockStyle.js'
 import { run, dur, OPEN_MS } from '../motion.js'
 import { ORBIT_ANGLES } from '../orbit.js'
@@ -24,6 +25,7 @@ const DISPLAY = 650
 export default function RestScreen({ orbitPaused = false, covered = false, onMicClick }) {
   const [clockStyle, setClockStyle] = useClockStyle()
   const [open, setOpen] = useState(null) // { key, from: {dx, dy, scale}, phase: 'opening' | 'open' | 'closing' }
+  const [recStage, setRecStage] = useState('start') // Gravação flow stage: the drag-up close only works on 'start'
   const rootRef = useRef(null)
   const overlayRef = useRef(null)
 
@@ -34,6 +36,7 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
     if (open) return
     const display = rootRef.current.closest('.device-display').getBoundingClientRect()
     const r = el.getBoundingClientRect()
+    setRecStage('start')
     setOpen({
       key,
       phase: 'opening',
@@ -82,6 +85,7 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
   }
 
   const view = open ? WIDGET_VIEWS[open.key] : null
+  const recording = open?.key === 'recording'
   const widgets = [
     { key: 'tasks', angle: ORBIT_ANGLES.tasks, node: <TasksWidget /> },
     { key: 'weather', angle: ORBIT_ANGLES.weather, node: <WeatherWidget /> },
@@ -124,9 +128,9 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
           <WidgetViewer
             pageCount={view.pageCount}
             initialIndex={open.key === 'clock' ? (clockStyle === 'b' ? 1 : 0) : 0}
-            renderPage={view.renderPage}
+            renderPage={recording ? () => <RecordingFlow onStageChange={setRecStage} onFinish={() => closeWidget({ dy: 0, index: 0 })} /> : view.renderPage}
             disabled={open.phase !== 'open'}
-            onClose={closeWidget}
+            onClose={recording && recStage !== 'start' ? undefined : closeWidget}
           />
         </div>
       )}

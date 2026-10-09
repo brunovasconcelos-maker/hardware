@@ -1,9 +1,10 @@
 import { CassetteTape } from '@phosphor-icons/react'
+import WidgetHit from '../../components/WidgetHit.jsx'
 import './recording.css'
 import '../screens.css'
 
-// Gravação, Tela 1 (Figma 107:1643): start recording. Visual only.
-export default function GravacaoScreen() {
+// Gravação, Tela 1 (Figma 107:1643): start recording. `onRecord` (optional) makes "Gravar" a button.
+export default function GravacaoScreen({ onRecord }) {
   return (
     <div className="voice-screen recording-screen">
       <div className="recording-start__group">
@@ -14,9 +15,15 @@ export default function GravacaoScreen() {
           a gravação
         </p>
       </div>
-      <div className="recording-button recording-button--pill recording-button--theme" style={{ left: 'calc(50% + 0.5px)', transform: 'translateX(-50%)' }}>
+      <WidgetHit
+        data-no-drag
+        label="Gravar"
+        className="recording-button recording-button--pill recording-button--theme"
+        style={{ left: 'calc(50% + 0.5px)', transform: 'translateX(-50%)' }}
+        onActivate={() => onRecord?.()}
+      >
         Gravar
-      </div>
+      </WidgetHit>
     </div>
   )
 }
