@@ -18,6 +18,8 @@ const VIDEO_FILES = import.meta.glob('./assets/characters/*.mp4', { eager: true,
 const VIDEO_CONFIG = {
   azul: { file: 'azul.mp4', fit: { scale: 1.056, dx: -32.6 / 1080, dy: -48 / 1080 } },
   roxo: { file: 'roxo.mp4', fit: { scale: 1.526, dx: -270.3 / 1080, dy: -271.8 / 1080 } },
+  verde: { file: 'verde.mp4', fit: { scale: 1.046, dx: -27 / 1080, dy: -24.7 / 1080 } },
+  laranja: { file: 'laranja.mp4', fit: { scale: 1.041, dx: -26.3 / 1080, dy: 7.1 / 1080 } },
 }
 // A missing file only logs an error: that theme keeps its PNG.
 export const CHARACTER_VIDEOS = Object.fromEntries(
