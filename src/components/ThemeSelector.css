@@ -1,11 +1,11 @@
-/* Figma 204:2997: white capsule, 1px border rgba(0,0,0,.25), 16px padding, 24px gap, 40px swatches. */
+/* Figma 204:2997: white capsule, 1px border rgba(0,0,0,.25), 8px padding, 24px gap, 40px swatches. */
 .theme-selector {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  padding: 16px;
+  padding: 8px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 360px;
