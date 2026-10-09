@@ -19,3 +19,11 @@
 .page-dots__dot--active {
   opacity: 1;
 }
+
+/* Result screen (Figma 460:5958 / 158:2173): top center, colored by the display's mode tokens instead of the theme's. */
+.page-dots--result {
+  top: 32px;
+}
+.page-dots--result .page-dots__dot {
+  background: var(--on-surface);
+}

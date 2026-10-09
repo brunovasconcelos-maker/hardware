@@ -22,9 +22,9 @@ All four images are mounted and preloaded; a theme switch crossfades their opaci
 does not break the build: that theme shows the solid circle only and a console error names the file. The Homepage and voice mode still
 use `MicButton`.
 
-## Result screen views
+## Result screen pages
 
-The Result (`screens/voice/ResultScreen.jsx`) has two views of the same answer: Personagem (default; the active theme's character from
-`src/assets/characters/`, crossfading 400ms on a theme change, on the display background token) and Texto. The left icon switches
-views (ChatText in Personagem, Alien in Texto), the right icon is the check. `characters.js` holds the shared PNG imports and the
-per-theme rest-circle framing; Figma designs the Result framing only for Laranja, the other themes are mapped from it.
+The Result (`screens/voice/ResultScreen.jsx`) is a two-page horizontal carousel: Personagem (default; the active theme's character from
+`src/assets/characters/`, crossfading 400ms on a theme change) and Texto. Swipe by drag or horizontal wheel/trackpad; the page dots
+(mode tokens) and the check button (`--ok-bg` = the theme's main color, `--ok-fg` dark) are fixed. `characters.js` holds the shared
+PNG imports and the per-theme rest-circle framing; Figma designs the Result framing only for Laranja, the other themes are mapped from it.

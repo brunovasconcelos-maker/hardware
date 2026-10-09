@@ -1,20 +1,23 @@
-import { useRef, useState, useEffect } from 'react'
-import { flushSync } from 'react-dom'
-import { ChatText, Alien, Check } from '@phosphor-icons/react'
+import { useRef, useState, useEffect, useLayoutEffect } from 'react'
+import { Check } from '@phosphor-icons/react'
 import { useDragScroll } from '../../hooks/useDragScroll.js'
 import WidgetHit from '../../components/WidgetHit.jsx'
+import PageDots from '../../components/PageDots.jsx'
 import { useTheme } from '../../theme/theme.js'
 import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME } from '../../characters.js'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
-import { EASE, EXIT_MS, ENTER_MS } from '../../transitions.js'
-import { dur } from '../../motion.js'
+import { run, dur, SNAP_MS } from '../../motion.js'
+import { FLICK_V, FLICK_MIN, lockDirection, velocity } from '../../gestures.js'
 import './voice.css'
 
-// Result, two views of the same answer: Personagem (Figma 435:5857, the theme's character) and Texto (Figma 158:2173).
-// The side icons and the check are fixed and identical in both views; only the content layer changes (it leaves scaling
-// down + fading, the new one enters scaling in + fading, like the screen transitions). The view state lives here, so
-// switching never touches whatever the parent does with the answer (speech keeps playing).
-// `initialView` is 'personagem' (default) or 'texto'; `onCheck` is called by the check icon.
+// Result, two pages of a horizontal carousel inside the display: Personagem (Figma 460:5958, the theme's character) and Texto
+// (Figma 158:2173). Swipe (mouse/touch drag or a horizontal trackpad/wheel scroll) moves between them; the page dots (top) and the
+// check button (bottom) stay fixed. The page state lives here, so switching never touches whatever the parent does with the
+// answer (speech keeps playing). `initialView` is 'personagem' (default) or 'texto'; `onCheck` is called by the check button.
+const W = 650 // the display
+const SWIPE_FRACTION = 0.25 // horizontal drag (share of the width) that changes page
+const PAGES = 2
+const WHEEL_STEP = 50 // px of horizontal wheel/trackpad scroll that changes page
 const MIN_SIDE = 1300 // px: a character smaller than this would look soft at the Figma size
 const warned = new Set()
 const checkSize = (e) => {
@@ -25,11 +28,11 @@ const checkSize = (e) => {
   }
 }
 
-// Figma 435:5857 only designs Laranja: its character box is 978px square at -164/-2 on the 650px display, clipped by the display
+// Figma 460:5958 only designs Laranja: its character box is 948px square at -149/28 on the 650px display, clipped by the display
 // circle. The other themes use the same framing relative to their rest-screen circle framing (Figma), mapped by the transform
 // that takes Laranja's rest-circle box to this one (scale + offset, so Laranja itself is exactly the Figma box).
 const DISPLAY = 650
-const LARANJA_BOX = { left: -164 / DISPLAY, top: -2 / DISPLAY, w: 978 / DISPLAY }
+const LARANJA_BOX = { left: -149 / DISPLAY, top: 28 / DISPLAY, w: 948 / DISPLAY }
 const K = LARANJA_BOX.w / CHARACTER_FRAME.laranja.w
 const BOX = Object.fromEntries(
   CHARACTER_IDS.map((id) => {
@@ -65,7 +68,7 @@ function CharacterView() {
   )
 }
 
-// Figma 158:2173. Only the text area scrolls; the bottom fade stays fixed.
+// Figma 158:2173. Only the text area scrolls (behind the check button); the bottom fade stays fixed on the page.
 function TextView({ result }) {
   const scroll = useRef(null)
   useDragScroll(scroll)
@@ -88,10 +91,19 @@ function TextView({ result }) {
 }
 
 export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 'personagem', onCheck }) {
-  const [view, setView] = useState(initialView)
-  const layer = useRef(null)
+  const [index, setIndex] = useState(initialView === 'texto' ? 1 : 0)
+  const indexRef = useRef(index)
+  const rootRef = useRef(null)
+  const trackRef = useRef(null)
+  const drag = useRef(null)
   const busy = useRef(false)
   const alive = useRef(true)
+
+  const setX = (x) => {
+    if (trackRef.current) trackRef.current.style.transform = `translate3d(${x}px,0,0)`
+  }
+  const baseX = () => -indexRef.current * W
+  useLayoutEffect(() => setX(baseX()), []) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     alive.current = true
     return () => {
@@ -99,30 +111,100 @@ export default function ResultScreen({ result = VOICE_RESULTS[0], initialView = 
     }
   }, [])
 
-  async function switchView() {
-    const el = layer.current
-    if (busy.current || !el) return
+  // Slides the track from `fromX` to page `target` (the current page again = snap back). The dots follow at once.
+  async function goTo(target, fromX) {
     busy.current = true
-    const out = el.animate([{ opacity: 1, scale: '1' }, { opacity: 0, scale: '0.92' }], { duration: dur(EXIT_MS), easing: EASE, fill: 'forwards' })
-    await out.finished.catch(() => {})
-    if (alive.current) {
-      flushSync(() => setView((v) => (v === 'texto' ? 'personagem' : 'texto')))
-      out.cancel()
-      await el.animate([{ opacity: 0, scale: '1.06' }, { opacity: 1, scale: '1' }], { duration: dur(ENTER_MS), easing: EASE, fill: 'backwards' }).finished.catch(() => {})
-    }
+    const toX = -target * W
+    indexRef.current = target
+    setIndex(target)
+    const { anim, done } = run(trackRef.current, [{ transform: `translate3d(${fromX}px,0,0)` }, { transform: `translate3d(${toX}px,0,0)` }], { duration: dur(SNAP_MS), easing: 'ease-out', fill: 'forwards' })
+    await done
+    if (!alive.current) return
+    setX(toX)
+    anim.cancel()
     busy.current = false
   }
 
-  const Left = view === 'texto' ? Alien : ChatText
+  // Soft resistance (35%) when dragging past the first or last page.
+  const rubber = (dx) => {
+    const target = indexRef.current - Math.sign(dx)
+    return target >= 0 && target < PAGES ? dx : dx * 0.35
+  }
+
+  function onPointerDown(e) {
+    if (busy.current || drag.current) return
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    drag.current = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lock: null, dx: 0, samples: [{ t: e.timeStamp, x: e.clientX, y: e.clientY }] }
+  }
+  function onPointerMove(e) {
+    const d = drag.current
+    if (!d || d.id !== e.pointerId) return
+    d.dx = e.clientX - d.x0
+    d.samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY })
+    if (!d.lock) {
+      d.lock = lockDirection(d.dx, e.clientY - d.y0) // same rule as the text's vertical drag scroll, so they never both act
+      if (d.lock === 'h') e.currentTarget.setPointerCapture(e.pointerId)
+    }
+    if (d.lock === 'h') setX(baseX() + rubber(d.dx))
+  }
+  function onPointerUp(e) {
+    const d = drag.current
+    if (!d || d.id !== e.pointerId) return
+    drag.current = null
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId)
+    if (d.lock !== 'h') return
+    const x = baseX() + rubber(d.dx)
+    const v = velocity(d.samples, 'x')
+    const dir = d.dx < 0 ? 1 : -1 // next page when dragging left
+    const next = indexRef.current + dir
+    const commits = e.type !== 'pointercancel' && (Math.abs(d.dx) > W * SWIPE_FRACTION || (Math.abs(v) > FLICK_V && Math.abs(d.dx) > FLICK_MIN && Math.sign(v) === Math.sign(d.dx)))
+    goTo(commits && next >= 0 && next < PAGES ? next : indexRef.current, x)
+  }
+
+  // Horizontal trackpad / wheel scroll (only when deltaX dominates; vertical wheel scrolls the text natively). One page per
+  // gesture: the momentum tail of a trackpad swipe is ignored until the wheel events stop.
+  useEffect(() => {
+    const el = rootRef.current
+    let acc = 0
+    let spent = false
+    let idle = 0
+    const onWheel = (e) => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+      e.preventDefault()
+      clearTimeout(idle)
+      idle = setTimeout(() => {
+        acc = 0
+        spent = false
+      }, 140)
+      if (spent || busy.current || drag.current) return
+      acc += e.deltaX
+      if (Math.abs(acc) < WHEEL_STEP) return
+      const next = indexRef.current + (acc > 0 ? 1 : -1)
+      acc = 0
+      spent = true
+      if (next >= 0 && next < PAGES) goTo(next, baseX())
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      clearTimeout(idle)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="voice-screen result-screen" data-view={view}>
-      <div ref={layer} className="result-screen__layer">
-        {view === 'texto' ? <TextView result={result} /> : <CharacterView />}
+    <div ref={rootRef} className="voice-screen result-screen" data-view={index === 1 ? 'texto' : 'personagem'}>
+      <div className="result-screen__viewport" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
+        <div ref={trackRef} className="result-screen__track">
+          <div className="result-screen__page" style={{ left: 0 }}>
+            <CharacterView />
+          </div>
+          <div className="result-screen__page" style={{ left: W }}>
+            <TextView result={result} />
+          </div>
+        </div>
       </div>
-      <WidgetHit label={view === 'texto' ? 'Ver personagem' : 'Ver texto'} className="result-screen__icon result-screen__icon--left" onActivate={switchView}>
-        <Left size={56} weight="regular" color="currentColor" />
-      </WidgetHit>
-      <WidgetHit label="Concluir" className="result-screen__icon result-screen__icon--right" onActivate={() => onCheck?.()}>
+      <PageDots className="page-dots--result" active={index} count={PAGES} />
+      <WidgetHit label="Concluir" className="result-screen__check" onActivate={() => onCheck?.()}>
         <Check size={56} weight="regular" color="currentColor" />
       </WidgetHit>
     </div>

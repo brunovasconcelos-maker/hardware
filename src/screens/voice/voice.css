@@ -14,10 +14,23 @@
   height: 140px;
 }
 
-/* Result: a content layer (the current view) under the fixed side icons */
-.result-screen__layer {
+/* Result: a horizontal carousel (two pages) under the fixed page dots and check button */
+.result-screen__viewport {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  touch-action: none; /* swipes are handled in JS; vertical drags scroll the text (useDragScroll) */
+}
+.result-screen__track {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.result-screen__page {
+  position: absolute;
+  top: 0;
+  width: 650px;
+  height: 650px;
 }
 .result-screen__character {
   position: absolute;
@@ -105,22 +118,19 @@
   background: linear-gradient(to bottom, transparent, var(--surface));
   pointer-events: none;
 }
-.result-screen__icon {
+.result-screen__check {
   position: absolute;
-  top: 252px;
-  width: 145px;
-  height: 145px;
+  left: 266px;
+  top: 526px;
+  box-sizing: border-box;
+  width: 120px;
+  height: 100px;
+  padding: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--on-surface-muted);
-}
-.result-screen__icon--left {
-  left: 0;
-}
-.result-screen__icon--right {
-  right: 0;
-}
-.result-screen [role='button'] {
+  border-radius: 360px;
+  background: var(--ok-bg); /* the theme's main color */
+  color: var(--ok-fg);
   cursor: pointer;
 }
