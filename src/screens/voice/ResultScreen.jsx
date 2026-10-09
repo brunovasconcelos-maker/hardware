@@ -4,7 +4,7 @@ import { useDragScroll } from '../../hooks/useDragScroll.js'
 import WidgetHit from '../../components/WidgetHit.jsx'
 import PageDots from '../../components/PageDots.jsx'
 import { useTheme } from '../../theme/theme.js'
-import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME, CHARACTER_VIDEOS, characterVideoUrl } from '../../characters.js'
+import { CHARACTER_IDS, CHARACTER_SRC, CHARACTER_FRAME, CHARACTER_VIDEOS, CHARACTER_OFFSET_Y, characterVideoUrl } from '../../characters.js'
 import { VOICE_RESULTS } from '../../mocks/voiceResults.js'
 import { run, dur, SNAP_MS, prefersReducedMotion } from '../../motion.js'
 import { FLICK_V, FLICK_MIN, lockDirection, velocity } from '../../gestures.js'
@@ -52,6 +52,9 @@ const videoBox = (id) => {
   const top0 = b.top + (b.height - side) / 2
   return { left: left0 + dx * side, top: top0 + dy * side, width: side * scale, height: side * scale }
 }
+// The per-theme vertical offset (config `offsetY`, px, positive = up), applied as a transform to the video and to its PNG alike, so
+// the poster never jumps against the video. Only the character moves: the fade, the check and the dots are separate layers.
+const offsetStyle = (id) => (CHARACTER_OFFSET_Y[id] ? { transform: `translateY(${-CHARACTER_OFFSET_Y[id]}px)` } : null)
 const REDUCED = prefersReducedMotion()
 // The theme whose video plays on the Personagem page (reduced motion: none, the PNG "poster" only).
 export const videoThemeOf = (theme) => (!REDUCED && CHARACTER_VIDEOS[theme] ? theme : null)
@@ -91,7 +94,7 @@ function CharacterVideo({ theme, paused, frozen, ready, onPlaying, elRef }) {
       preload="auto"
       width={Math.round(box.width)}
       height={Math.round(box.height)}
-      style={box}
+      style={{ ...box, ...offsetStyle(theme) }}
       data-ready={ready ? '' : undefined}
       onPlaying={onPlaying}
     />
@@ -138,7 +141,7 @@ function CharacterView({ videoPaused, frozen }) {
             decoding="async"
             width={Math.round(BOX[id].width)}
             height={Math.round(BOX[id].height)}
-            style={BOX[id]}
+            style={{ ...BOX[id], ...offsetStyle(id) }}
             data-id={id}
             data-active={theme === id && !(videoOn && held === id) ? '' : undefined}
             onLoad={checkSize}

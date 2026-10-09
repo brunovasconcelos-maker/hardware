@@ -11,16 +11,19 @@ for (const [id, src] of Object.entries(CHARACTER_SRC)) {
 
 // Character videos: a theme with a looping video (src/assets/characters/<theme>.mp4: H.264, no audio) plays it on the Result's
 // Personagem view instead of its PNG (the PNG is the poster and the fallback). To add a theme video: put <theme>.mp4 in
-// src/assets/characters/ and add one entry here. `fit` places the video's 1080px frame relative to that theme's PNG box so the
+// src/assets/characters/ and add one entry here. `offsetY` moves the character (video and PNG) up by that many px on the Result's
+// Personagem view (positive = up). `fit` places the video's 1080px frame relative to that theme's PNG box so the
 // character is as large and as centered as the PNG's (scale about the head, plus a shift as a fraction of the box); it was measured
 // on the silhouette bounding boxes of the PNG and of 25 frames of the video (the characters sway a little, so it matches on average).
 const VIDEO_FILES = import.meta.glob('./assets/characters/*.mp4', { eager: true, import: 'default' })
 const VIDEO_CONFIG = {
-  azul: { file: 'azul.mp4', fit: { scale: 1.056, dx: -32.6 / 1080, dy: -48 / 1080 } },
-  roxo: { file: 'roxo.mp4', fit: { scale: 1.526, dx: -270.3 / 1080, dy: -271.8 / 1080 } },
-  verde: { file: 'verde.mp4', fit: { scale: 1.046, dx: -27 / 1080, dy: -24.7 / 1080 } },
-  laranja: { file: 'laranja.mp4', fit: { scale: 1.041, dx: -26.3 / 1080, dy: 7.1 / 1080 } },
+  azul: { file: 'azul.mp4', offsetY: 0, fit: { scale: 1.056, dx: -32.6 / 1080, dy: -48 / 1080 } },
+  roxo: { file: 'roxo.mp4', offsetY: 24, fit: { scale: 1.526, dx: -270.3 / 1080, dy: -271.8 / 1080 } },
+  verde: { file: 'verde.mp4', offsetY: 40, fit: { scale: 1.046, dx: -27 / 1080, dy: -24.7 / 1080 } },
+  laranja: { file: 'laranja.mp4', offsetY: 0, fit: { scale: 1.041, dx: -26.3 / 1080, dy: 7.1 / 1080 } },
 }
+// The vertical offset applies to the PNG too, whether or not the video file exists.
+export const CHARACTER_OFFSET_Y = Object.fromEntries(Object.entries(VIDEO_CONFIG).map(([id, c]) => [id, c.offsetY ?? 0]))
 // A missing file only logs an error: that theme keeps its PNG.
 export const CHARACTER_VIDEOS = Object.fromEntries(
   Object.entries(VIDEO_CONFIG).flatMap(([id, { file, fit }]) => {
