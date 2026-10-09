@@ -1,6 +1,6 @@
 import { useRef, useState, useLayoutEffect } from 'react'
 import OrbitItem from '../components/OrbitItem.jsx'
-import MicButton from '../components/MicButton.jsx'
+import CharacterCircle from '../components/CharacterCircle.jsx'
 import WidgetHit from '../components/WidgetHit.jsx'
 import WidgetViewer from '../components/WidgetViewer.jsx'
 import TasksWidget from '../components/widgets/TasksWidget.jsx'
@@ -18,7 +18,7 @@ import './RestScreen.css'
 
 const DISPLAY = 650
 
-// "Tela de Descanso": microphone in the center, six widgets on a shared circular orbit.
+// "Tela de Descanso": character circle in the center, six widgets on a shared circular orbit.
 // Clicking a widget grows it into its full-screen view (orbit paused); dragging that view up closes it.
 // `orbitPaused` freezes (and resumes) the orbit rotation without resetting its position. While the screen is completely
 // covered (`covered`, or a widget fully open) the orbit is paused too; it resumes from where it stopped.
@@ -119,7 +119,7 @@ export default function RestScreen({ orbitPaused = false, covered = false, onMic
             }
           }}
         >
-          <MicButton />
+          <CharacterCircle />
         </div>
       </div>
       {open && (

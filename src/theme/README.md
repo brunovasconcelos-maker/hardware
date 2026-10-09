@@ -13,3 +13,11 @@ Every color on top of or inside a gradient comes from a theme token. Do not hard
 - **Surfaces** (display background, text on it, Menu...) follow the light/dark *mode* (`mode.js`), not the color theme.
 - Gradients are static (no drift animation). Switching themes morphs the registered color variables (600ms) only for the orbs
   that are visible; the saved theme is in `localStorage` (`hardware.theme`), unknown values fall back to the default (Roxo).
+
+## Rest-screen character circle
+
+The center circle of the rest screen (`components/CharacterCircle.jsx`) is a flat `--char-bg` circle (a registered color token that
+morphs with the theme, per-theme value `charBg` in `themes.js`) with the theme's character from `src/assets/characters/<theme>.png`.
+All four images are mounted and preloaded; a theme switch crossfades their opacity (400ms) while the background morphs. A missing PNG
+does not break the build: that theme shows the solid circle only and a console error names the file. The Homepage and voice mode still
+use `MicButton`.

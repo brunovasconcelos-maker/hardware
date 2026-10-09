@@ -1,0 +1,20 @@
+.character-circle {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--char-bg);
+}
+
+.character-circle__img {
+  position: absolute;
+  max-width: none;
+  opacity: 0;
+  transition: opacity 400ms ease-in-out;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.character-circle__img[data-active] {
+  opacity: 1;
+}

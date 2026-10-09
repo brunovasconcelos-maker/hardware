@@ -11,13 +11,14 @@ import { registerModeVars, initMode, MODE_VARS, FADE_MS as MODE_FADE_MS } from '
 //   --grain                1 when the theme uses the grain overlay, else 0 (the overlay is always mounted; its opacity follows this)
 //   --depth / --depth-2     soft dark regions inside the orbs (Azul has two)
 //   --sun / --sun-alt       the accent glow (Laranja has a second accent, used by some orbs)
+//   --char-bg               flat background of the rest-screen character circle (see CharacterCircle)
 // Components only reference these variables (never literal colors), so switching themes restyles every screen, and
 // the registered properties let the browser crossfade between themes without touching the animated gradient layers.
 const KEY = 'hardware.theme'
 const FADE_MS = 600 // theme colors and grain morph (mode tokens keep their own 400ms, see mode.js)
 
 const orbVar = (id, slot) => `--o-${id}-${slot}`
-const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--depth', '--depth-2', '--sun', '--sun-alt']
+const TOKEN_VARS = ['--fg', '--fg-contrast', '--ok-bg', '--ok-fg', '--depth', '--depth-2', '--sun', '--sun-alt', '--char-bg']
 const GRAIN_VAR = '--grain'
 // Number of color slots of each orb (slot 0 = base, plus every slot its layers use).
 const slotCount = (orb) => 1 + Math.max(0, ...orb.layers.flatMap((l) => l.stops.map(([c]) => (c === 'transparent' ? 0 : c))))
@@ -84,6 +85,7 @@ export function applyTheme(id) {
   root.style.setProperty('--depth-2', t.depth2 ?? 'transparent') // only Azul has a second depth region
   root.style.setProperty('--sun', t.sun)
   root.style.setProperty('--sun-alt', t.sunAlt ?? t.sun)
+  root.style.setProperty('--char-bg', t.charBg)
   root.style.setProperty(GRAIN_VAR, t.grain ? '1' : '0')
   for (const [orb, colors] of Object.entries(t.orbs)) colors.forEach((c, i) => root.style.setProperty(orbVar(orb, i), c))
   root.dataset.theme = id

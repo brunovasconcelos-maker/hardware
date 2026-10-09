@@ -137,6 +137,7 @@ const theme = (id, label, main, extra) => ({
   okBg: main, // OK button: the theme's main color, dark check (black has good contrast on all four)
   okFg: '#000000',
   grain: true,
+  charBg: main, // rest-screen character circle background (the Figma flat color; equals the theme's main color)
   ...extra,
 })
 
