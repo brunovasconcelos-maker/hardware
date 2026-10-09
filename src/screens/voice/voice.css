@@ -14,7 +14,26 @@
   height: 140px;
 }
 
-/* Result */
+/* Result: a content layer (the current view) under the fixed side icons */
+.result-screen__layer {
+  position: absolute;
+  inset: 0;
+}
+.result-screen__character {
+  position: absolute;
+  inset: 0;
+}
+.result-screen__character-img {
+  position: absolute;
+  max-width: none;
+  object-fit: cover; /* Figma's object-cover */
+  opacity: 0;
+  transition: opacity 400ms ease-in-out; /* only the theme crossfade; the character itself never animates */
+  pointer-events: none;
+}
+.result-screen__character-img[data-active] {
+  opacity: 1;
+}
 .result-screen__scroll {
   position: absolute;
   left: 147px;
@@ -94,6 +113,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--on-surface-muted);
 }
 .result-screen__icon--left {
   left: 0;
@@ -101,22 +121,6 @@
 .result-screen__icon--right {
   right: 0;
 }
-.result-screen__ok {
-  position: absolute;
-  left: calc(50% + 0.5px);
-  top: 522px;
-  transform: translateX(-50%);
-  box-sizing: border-box;
-  height: 88px;
-  padding: 10px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 360px;
-  background: var(--ok-bg);
-  color: var(--ok-fg);
-}
-
 .result-screen [role='button'] {
   cursor: pointer;
 }

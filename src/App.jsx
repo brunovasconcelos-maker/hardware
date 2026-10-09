@@ -43,6 +43,7 @@ export default function App() {
         <Route path="/voz/gravando" element={<VoiceRecordingPreview />} />
         <Route path="/voz/pensando" element={<VoiceThinkingPreview />} />
         <Route path="/voz/resultado" element={<VoiceResultPreview />} />
+        <Route path="/voz/resultado/texto" element={<VoiceResultPreview view="texto" />} />
         <Route path="/historico" element={<Stage />} />
         <Route path="/configuracoes" element={<Stage />} />
         <Route path="/configuracoes/cores" element={<Stage />} />

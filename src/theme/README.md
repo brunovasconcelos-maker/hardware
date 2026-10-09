@@ -21,3 +21,10 @@ morphs with the theme, per-theme value `charBg` in `themes.js`) with the theme's
 All four images are mounted and preloaded; a theme switch crossfades their opacity (400ms) while the background morphs. A missing PNG
 does not break the build: that theme shows the solid circle only and a console error names the file. The Homepage and voice mode still
 use `MicButton`.
+
+## Result screen views
+
+The Result (`screens/voice/ResultScreen.jsx`) has two views of the same answer: Personagem (default; the active theme's character from
+`src/assets/characters/`, crossfading 400ms on a theme change, on the display background token) and Texto. The left icon switches
+views (ChatText in Personagem, Alien in Texto), the right icon is the check. `characters.js` holds the shared PNG imports and the
+per-theme rest-circle framing; Figma designs the Result framing only for Laranja, the other themes are mapped from it.

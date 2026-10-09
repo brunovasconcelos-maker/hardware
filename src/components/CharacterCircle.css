@@ -8,6 +8,7 @@
 .character-circle__img {
   position: absolute;
   max-width: none;
+  object-fit: cover; /* Figma's object-cover (Roxo's box is not square) */
   opacity: 0;
   transition: opacity 400ms ease-in-out;
   pointer-events: none;

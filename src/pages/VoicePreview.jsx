@@ -19,6 +19,6 @@ export function VoiceThinkingPreview() {
   return <DeviceDisplay><ThinkingScreen frame={frame} /></DeviceDisplay>
 }
 
-export function VoiceResultPreview() {
-  return <DeviceDisplay><ResultScreen /></DeviceDisplay>
+export function VoiceResultPreview({ view = 'personagem' }) {
+  return <DeviceDisplay><ResultScreen key={view} initialView={view} /></DeviceDisplay>
 }

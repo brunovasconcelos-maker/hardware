@@ -47,11 +47,11 @@ function thinkingHeights(ms) {
 
 // Simulated voice mode on the Homepage layer. Phases:
 //  home -> starting (400ms) -> idle (dots, 1s) -> recording (fake voice) -> sending -> thinking (3.5s) -> result
-//  result -> leaving (OK) -> home
+//  result -> leaving (check) -> home
 // Visual design comes from the Homepage / recording / thinking / result screens; this component only animates them.
 // `fixedResult` (optional) forces one answer; by default each sent recording shows a random mock response (never the
 // same one twice in a row).
-export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridClick, onListClick, onBusyChange }) {
+export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridClick, onBusyChange }) {
   const [phase, setPhase] = useState('home')
   const [result, setResult] = useState(fixedResult ?? null) // the answer shown / read / saved for the current session
   const prevPhase = useRef(null)
@@ -77,7 +77,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
     return () => onBusyChange?.(false)
   }, [phase, onBusyChange])
 
-  // Speech: starts when the result appears and stops when it is left (OK) or the flow unmounts.
+  // Speech: starts when the result appears and stops when it is left (check) or the flow unmounts.
   useEffect(() => {
     if (phase !== 'result' || !result) return undefined
     const speech = speakResult(result)
@@ -248,7 +248,7 @@ export default function VoiceFlow({ name = 'Bruno', result: fixedResult, onGridC
 
       {showResult && result && (
         <div ref={resultWrap} className="voice-flow__result">
-          <ResultScreen result={result} onGridClick={() => onGridClick?.()} onListClick={() => onListClick?.()} onOkClick={onOk} />
+          <ResultScreen result={result} onCheck={onOk} />
         </div>
       )}
     </div>

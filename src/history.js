@@ -14,10 +14,11 @@ export function loadHistory() {
   }
 }
 
-// Appends `result` to the history. Returns the saved entry, or null if storage is unavailable (reported in the console).
+// Saves `result` as the newest entry. An older entry for the same answer (same id) is replaced, so the answer moves to the
+// top of Histórico instead of repeating. Returns the saved entry, or null if storage is unavailable (reported in the console).
 export function saveToHistory(result) {
   const entry = { id: result.id, timestamp: new Date().toISOString(), historyTitle: result.historyTitle, title: result.title, date: result.date, subtitle: result.subtitle, body: result.body }
-  if (writeItem(KEY, JSON.stringify([...loadHistory(), entry]))) return entry
+  if (writeItem(KEY, JSON.stringify([...loadHistory().filter((e) => e.id !== entry.id), entry]))) return entry
   console.warn('[histórico] Não foi possível salvar no localStorage; a resposta não foi guardada no histórico.')
   return null
 }
